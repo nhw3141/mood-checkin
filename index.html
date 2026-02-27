@@ -4,288 +4,375 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mood Check-In</title>
+  <meta name="description" content="A cute pastel 4-hour mood tracker with notes, sleep schedule, and 1-year browser storage." />
+
   <style>
     :root{
-      --bg1:#fff7fb;
-      --bg2:#f3fbff;
-      --card:#ffffffcc;
-      --ink:#2b2b2b;
-      --muted:#6b7280;
-      --ring:#1118271a;
-      --shadow: 0 12px 30px rgba(0,0,0,.08);
-      --radius: 22px;
-      --btn-radius: 16px;
-      --border: 1px solid rgba(17,24,39,.10);
+      /* Pastel theme */
+      --bg-a: #fff1f7;
+      --bg-b: #eefbff;
+      --bg-c: #f6f3ff;
+
+      --card: rgba(255,255,255,.78);
+      --card-strong: rgba(255,255,255,.90);
+
+      --ink: #2c2433;
+      --muted: rgba(44,36,51,.68);
+
+      --border: 1px solid rgba(44,36,51,.10);
+      --shadow: 0 18px 45px rgba(44,36,51,.10);
+
+      --radius-xl: 26px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
+      --radius-pill: 999px;
+
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+      /* Accent */
+      --accent: #a78bfa;
+      --accent-2: #fb7185;
+      --accent-3: #67e8f9;
+      --good: #86efac;
+      --warn: #fde68a;
+      --bad: #fca5a5;
+
+      /* Emotion palette (pastel) */
+      --emo-happy:   #ffe08a;
+      --emo-calm:    #b8f7d0;
+      --emo-neutral: #d6dbe6;
+      --emo-tired:   #c7c0e8;
+      --emo-anxious: #bfeeff;
+      --emo-sad:     #b6b9df;
+      --emo-angry:   #ffb4c0;
     }
 
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: var(--sans);
-      color:var(--ink);
-      background:
-        radial-gradient(1200px 600px at 10% 10%, var(--bg2), transparent 60%),
-        radial-gradient(900px 500px at 90% 0%, var(--bg1), transparent 55%),
-        linear-gradient(180deg, #ffffff, #fafafa);
+      color: var(--ink);
       min-height:100vh;
       padding: 18px;
+
+      background:
+        radial-gradient(900px 550px at 15% 15%, var(--bg-b), transparent 60%),
+        radial-gradient(1000px 600px at 85% 10%, var(--bg-a), transparent 55%),
+        radial-gradient(900px 650px at 70% 85%, var(--bg-c), transparent 55%),
+        linear-gradient(180deg, #ffffff, #faf8ff);
     }
 
     .wrap{
-      max-width: 980px;
+      max-width: 1040px;
       margin: 0 auto;
       display:flex;
       flex-direction:column;
       gap: 14px;
     }
 
+    /* Top bar */
     header{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 12px;
+      padding: 12px 12px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(255,255,255,.78), rgba(255,255,255,.55));
+      border: var(--border);
+      box-shadow: 0 16px 40px rgba(44,36,51,.08);
+      backdrop-filter: blur(10px);
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap: 10px;
+      gap: 12px;
+      min-width: 250px;
     }
 
     .logo{
-      width:44px;height:44px;border-radius:14px;
-      background: conic-gradient(from 220deg, #ffcc66, #ff6fae, #7c5cff, #5dd6ff, #7dffb2, #ffcc66);
-      box-shadow: var(--shadow);
-      border: var(--border);
+      width:54px;height:54px;border-radius: 18px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.85), transparent 35%),
+        conic-gradient(from 210deg, #a78bfa, #fb7185, #67e8f9, #86efac, #fde68a, #a78bfa);
+      border: 1px solid rgba(44,36,51,.10);
+      box-shadow: 0 18px 45px rgba(44,36,51,.12);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute;
+      inset:-20px;
+      background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.70), transparent 45%);
+      transform: rotate(10deg);
     }
 
     h1{
       margin:0;
       font-size: 18px;
-      line-height:1.2;
       letter-spacing:.2px;
+      line-height:1.15;
     }
     .sub{
-      margin:2px 0 0;
-      font-size: 12px;
+      margin:3px 0 0;
+      font-size: 12.5px;
       color: var(--muted);
     }
 
     .nowbox{
       display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap: 2px;
-      font-size: 12px;
-      color: var(--muted);
+      align-items:center;
+      gap: 10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
-    .nowbox b{
-      color: var(--ink);
-      font-size: 13px;
-    }
+
     .pill{
       display:inline-flex;
       align-items:center;
       gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: #ffffffb3;
+      padding: 9px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(255,255,255,.70);
       border: var(--border);
-      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      box-shadow: 0 12px 25px rgba(44,36,51,.08);
       white-space:nowrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill b{
+      color: var(--ink);
+      font-size: 13px;
     }
 
+    /* Tabs */
     nav{
       display:flex;
       gap: 8px;
       flex-wrap:wrap;
+      align-items:center;
     }
     .tab{
       border: var(--border);
-      background:#fff;
-      padding: 10px 12px;
-      border-radius: 999px;
+      background: rgba(255,255,255,.76);
+      padding: 10px 13px;
+      border-radius: var(--radius-pill);
       cursor:pointer;
-      font-weight: 600;
+      font-weight: 800;
       font-size: 13px;
-      box-shadow: 0 10px 20px rgba(0,0,0,.05);
-      transition: transform .06s ease, box-shadow .2s ease;
+      box-shadow: 0 14px 26px rgba(44,36,51,.08);
+      transition: transform .08s ease, box-shadow .18s ease, outline .18s ease;
     }
-    .tab:active{transform: translateY(1px)}
+    .tab:hover{ transform: translateY(-1px); }
+    .tab:active{ transform: translateY(0px); }
     .tab.active{
-      outline: 3px solid rgba(124,92,255,.18);
-      border-color: rgba(124,92,255,.35);
+      outline: 3px solid rgba(167,139,250,.20);
+      border-color: rgba(167,139,250,.32);
+      background: linear-gradient(135deg, rgba(167,139,250,.18), rgba(251,113,133,.14), rgba(103,232,249,.14));
     }
 
+    /* Layout */
     .grid{
       display:grid;
       grid-template-columns: 1.35fr .65fr;
       gap: 14px;
     }
-    @media (max-width: 900px){
+    @media (max-width: 920px){
       .grid{grid-template-columns: 1fr}
-      .nowbox{align-items:flex-start}
       header{flex-direction:column; align-items:flex-start}
+      .nowbox{justify-content:flex-start}
     }
 
+    /* Cards */
     .card{
       background: var(--card);
-      backdrop-filter: blur(10px);
       border: var(--border);
-      border-radius: var(--radius);
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
-      padding: 14px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
     }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-40px;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(167,139,250,.12), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(251,113,133,.10), transparent 45%),
+        radial-gradient(circle at 70% 85%, rgba(103,232,249,.12), transparent 50%);
+      pointer-events:none;
+    }
+    .card > *{ position:relative; }
 
     .card h2{
       margin:0 0 10px;
-      font-size: 15px;
+      font-size: 15.5px;
+      letter-spacing:.15px;
     }
     .hint{
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--muted);
       margin-top: -6px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      line-height:1.35;
     }
 
+    /* Due bubble */
     .due{
       display:flex;
       gap: 10px;
       align-items:flex-start;
       padding: 12px;
-      border-radius: 18px;
-      border: 1px dashed rgba(17,24,39,.18);
-      background: rgba(255,255,255,.7);
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(44,36,51,.18);
+      background: rgba(255,255,255,.70);
     }
     .dot{
       width: 10px; height:10px; border-radius:999px;
-      background:#7c5cff;
-      margin-top:4px;
-      box-shadow: 0 0 0 6px rgba(124,92,255,.12);
+      background: var(--accent);
+      box-shadow: 0 0 0 7px rgba(167,139,250,.16);
+      margin-top: 4px;
       flex: 0 0 auto;
+      animation: pulse 2.1s ease-in-out infinite;
     }
-    .due b{display:block}
-    .mono{font-family: var(--mono)}
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.08); }
+    }
+    .small{ font-size: 12px; color: var(--muted); }
+    .mono{ font-family: var(--mono); }
 
+    /* Emotions */
     .emotions{
       display:grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
       margin-top: 12px;
     }
-    @media (max-width: 540px){
+    @media (max-width: 560px){
       .emotions{grid-template-columns: repeat(2, minmax(0, 1fr))}
     }
 
     .emo{
       border: var(--border);
-      border-radius: var(--btn-radius);
-      padding: 12px 10px;
+      border-radius: var(--radius-lg);
+      padding: 12px 12px;
       cursor:pointer;
-      background:#fff;
-      box-shadow: 0 10px 18px rgba(0,0,0,.05);
-      transition: transform .06s ease, box-shadow .2s ease, outline .2s ease;
+      background: rgba(255,255,255,.86);
+      box-shadow: 0 14px 26px rgba(44,36,51,.08);
+      transition: transform .08s ease, box-shadow .18s ease, outline .18s ease;
       display:flex;
       flex-direction:column;
       gap: 6px;
       align-items:flex-start;
-      min-height: 70px;
+      min-height: 74px;
       position:relative;
       overflow:hidden;
     }
-    .emo:active{transform: translateY(1px)}
-    .emo .name{font-weight:800; font-size: 13px}
-    .emo .desc{font-size: 11px; color: var(--muted)}
+    .emo:hover{ transform: translateY(-1px); }
+    .emo:active{ transform: translateY(0px); }
+    .emo .name{ font-weight: 900; font-size: 13.5px; }
+    .emo .desc{ font-size: 11.5px; color: var(--muted); }
     .emo .swatch{
       position:absolute;
-      right:-20px; top:-20px;
-      width: 80px; height: 80px;
+      right:-18px; top:-18px;
+      width: 86px; height: 86px;
       border-radius: 999px;
+      opacity: .30;
       filter: blur(0px);
-      opacity: .22;
     }
     .emo.selected{
-      outline: 3px solid rgba(17,24,39,.12);
-      border-color: rgba(17,24,39,.22);
-      box-shadow: 0 14px 28px rgba(0,0,0,.08);
+      outline: 3px solid rgba(44,36,51,.12);
+      border-color: rgba(44,36,51,.22);
+      box-shadow: 0 18px 38px rgba(44,36,51,.10);
     }
 
+    /* Notes */
     textarea{
       width:100%;
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       border: var(--border);
       padding: 12px;
       font-family: var(--sans);
       font-size: 13px;
       resize: vertical;
-      min-height: 110px;
+      min-height: 118px;
       outline:none;
       background: rgba(255,255,255,.85);
+      box-shadow: inset 0 2px 0 rgba(44,36,51,.04);
     }
     textarea:focus{
-      outline: 3px solid rgba(93,214,255,.22);
-      border-color: rgba(93,214,255,.35);
+      outline: 3px solid rgba(103,232,249,.22);
+      border-color: rgba(103,232,249,.35);
+      background: rgba(255,255,255,.95);
     }
 
+    /* Buttons */
     .row{
       display:flex;
       gap: 10px;
       align-items:center;
       flex-wrap:wrap;
     }
-
     .btn{
       border: var(--border);
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
       padding: 10px 14px;
       cursor:pointer;
-      background:#fff;
-      box-shadow: 0 10px 18px rgba(0,0,0,.05);
-      font-weight:800;
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 14px 26px rgba(44,36,51,.08);
+      font-weight: 900;
       font-size: 13px;
-      transition: transform .06s ease, box-shadow .2s ease;
+      transition: transform .08s ease, box-shadow .18s ease, filter .18s ease;
+      user-select:none;
     }
-    .btn:active{transform: translateY(1px)}
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.01); }
+    .btn:active{ transform: translateY(0px); }
     .btn.primary{
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(255,111,174,.95));
       color:#fff;
-      border: 1px solid rgba(0,0,0,.08);
+      border: 1px solid rgba(44,36,51,.10);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.25), transparent 35%),
+        linear-gradient(135deg, rgba(167,139,250,.95), rgba(251,113,133,.92));
     }
     .btn.ghost{
-      background: rgba(255,255,255,.70);
+      background: rgba(255,255,255,.65);
     }
     .btn.danger{
-      background: linear-gradient(135deg, rgba(17,24,39,.92), rgba(239,68,68,.86));
       color:#fff;
-      border: 1px solid rgba(0,0,0,.08);
+      border: 1px solid rgba(44,36,51,.10);
+      background: linear-gradient(135deg, rgba(251,113,133,.92), rgba(252,165,165,.86));
     }
-
-    .small{
-      font-size: 12px;
-      color: var(--muted);
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
     }
 
     .divider{
       height:1px;
-      background: rgba(17,24,39,.10);
+      background: rgba(44,36,51,.10);
       margin: 12px 0;
     }
 
+    /* Lists */
     .list{
       display:flex;
       flex-direction:column;
       gap: 10px;
       margin-top: 10px;
     }
-
     .entry{
       border: var(--border);
-      border-radius: 18px;
-      background: rgba(255,255,255,.78);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.84);
       padding: 12px;
-      box-shadow: 0 10px 18px rgba(0,0,0,.05);
+      box-shadow: 0 14px 26px rgba(44,36,51,.08);
     }
     .entryTop{
       display:flex;
@@ -297,93 +384,124 @@
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-weight:900;
+      padding: 7px 11px;
+      border-radius: var(--radius-pill);
+      font-weight: 950;
       font-size: 12px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(44,36,51,.10);
+      background: rgba(255,255,255,.75);
     }
     .tag i{
       width:10px;height:10px;border-radius:999px; display:inline-block;
       background: #999;
+      box-shadow: 0 0 0 5px rgba(44,36,51,.06);
     }
     .entryTime{
       font-size: 12px;
       color: var(--muted);
       white-space:nowrap;
+      text-align:right;
     }
     .entryNote{
       margin: 10px 0 0;
       font-size: 13px;
-      line-height: 1.35;
+      line-height: 1.38;
       white-space:pre-wrap;
     }
 
+    /* Forms */
     .formGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
-    @media (max-width: 540px){
+    @media (max-width: 560px){
       .formGrid{grid-template-columns:1fr}
     }
-
     label{
       display:flex;
       flex-direction:column;
       gap: 6px;
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--muted);
-      font-weight: 700;
+      font-weight: 850;
     }
-
     input[type="time"], input[type="number"], input[type="date"]{
       border: var(--border);
-      border-radius: 14px;
+      border-radius: var(--radius-md);
       padding: 10px 10px;
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.86);
       font-family: var(--sans);
       font-size: 13px;
       outline:none;
+      box-shadow: inset 0 2px 0 rgba(44,36,51,.04);
     }
     input:focus{
-      outline: 3px solid rgba(255,204,102,.28);
-      border-color: rgba(255,204,102,.45);
+      outline: 3px solid rgba(253,230,138,.28);
+      border-color: rgba(253,230,138,.45);
+      background: rgba(255,255,255,.95);
     }
 
+    /* Insights */
     canvas{
       width:100%;
       height:260px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.75);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.82);
       border: var(--border);
-      box-shadow: 0 10px 18px rgba(0,0,0,.05);
+      box-shadow: 0 14px 26px rgba(44,36,51,.08);
     }
 
+    /* Toast */
     .toast{
       position: fixed;
       left: 18px;
       bottom: 18px;
       right: 18px;
-      max-width: 980px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 12px 14px;
-      border-radius: 18px;
+      border-radius: var(--radius-xl);
       background: rgba(255,255,255,.92);
       border: var(--border);
-      box-shadow: 0 18px 40px rgba(0,0,0,.12);
+      box-shadow: 0 22px 55px rgba(44,36,51,.16);
       display:none;
       gap: 10px;
       align-items:flex-start;
       z-index: 50;
+      backdrop-filter: blur(10px);
     }
     .toast.show{display:flex}
-    .toast .tDot{width:10px;height:10px;border-radius:999px;background:#7dffb2;box-shadow:0 0 0 6px rgba(125,255,178,.18); margin-top:4px;}
-    .toast .tText{font-size: 13px; line-height:1.25;}
-    .toast .tText b{display:block}
+    .toast .tDot{
+      width:10px;height:10px;border-radius:999px;
+      background: var(--good);
+      box-shadow: 0 0 0 7px rgba(134,239,172,.18);
+      margin-top:4px;
+    }
+    .toast .tText{ font-size: 13px; line-height:1.25; }
+    .toast .tText b{ display:block; }
+
+    /* Cute header extra line */
+    .tiny-badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: var(--radius-pill);
+      background: rgba(255,255,255,.72);
+      border: var(--border);
+      box-shadow: 0 14px 26px rgba(44,36,51,.08);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .spark{
+      width:10px;height:10px;border-radius:999px;
+      background: var(--warn);
+      box-shadow: 0 0 0 7px rgba(253,230,138,.16);
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -391,11 +509,12 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Mood Check-In</h1>
-          <div class="sub">A cute little 4-hour emotion tracker (awake time only)</div>
+          <div class="sub">Cute pastel 4-hour tracking (awake time only) with notes 💗</div>
         </div>
       </div>
 
       <div class="nowbox">
+        <div class="tiny-badge"><span class="spark" aria-hidden="true"></span> gentle + honest mood tracking</div>
         <div class="pill"><span>Local time:</span> <b id="nowTime">—</b></div>
         <div class="pill"><span>Today:</span> <b id="nowDate">—</b></div>
       </div>
@@ -412,7 +531,7 @@
     <section class="grid" id="view-checkin">
       <div class="card">
         <h2>How do you feel right now?</h2>
-        <div class="hint">Pick one emotion, add a note if you want, then save.</div>
+        <div class="hint">Pick an emotion (Neutral is always okay), add a note if you want, then save.</div>
 
         <div class="due">
           <div class="dot" aria-hidden="true"></div>
@@ -427,7 +546,7 @@
         <div class="divider"></div>
 
         <label for="noteBox">Notes (optional)</label>
-        <textarea id="noteBox" placeholder="What happened? What triggered this feeling? Anything you want to remember later…"></textarea>
+        <textarea id="noteBox" placeholder="What happened? What changed your mood? Anything you want to remember later…"></textarea>
 
         <div class="row" style="margin-top:10px;">
           <button class="btn primary" id="saveBtn">Save check-in</button>
@@ -469,7 +588,7 @@
 
       <div class="card">
         <h2>Scheduled slots (awake only)</h2>
-        <div class="hint">This is what “every 4 hours” means for the selected date based on your sleep schedule.</div>
+        <div class="hint">Slots are every 4 hours during awake time, based on your sleep schedule.</div>
         <div class="list" id="slotList"></div>
       </div>
     </section>
@@ -478,7 +597,7 @@
     <section class="grid" id="view-insights" style="display:none;">
       <div class="card">
         <h2>Insights</h2>
-        <div class="hint">A simple weekly snapshot based on your saved check-ins.</div>
+        <div class="hint">A simple weekly snapshot. Bright bars mean lighter days, deeper tones mean heavier days.</div>
         <canvas id="chart"></canvas>
         <div class="divider"></div>
         <div class="row">
@@ -489,15 +608,15 @@
 
       <div class="card">
         <h2>Export & backup</h2>
-        <div class="hint">Recommended if you want extra safety. Exporting does not delete anything.</div>
+        <div class="hint">Export anytime for safety. Exporting does not delete anything.</div>
         <div class="row">
           <button class="btn" id="exportJson">Export JSON</button>
           <button class="btn" id="exportCsv">Export CSV</button>
         </div>
         <div class="divider"></div>
         <div class="small">
-          Storage: <b>IndexedDB</b> in this browser. It can store 1+ years of entries easily.
-          For multi-device sync, you can later plug in Firebase/Supabase (notes in Settings).
+          Storage: <b>IndexedDB</b> in this browser. It can hold a year (or more) of entries.
+          For multi-device sync later, you can upgrade to Firebase or Supabase.
         </div>
       </div>
     </section>
@@ -540,23 +659,23 @@
         <h2 style="margin-top:0;">Cloud sync upgrade path</h2>
         <div class="small">
           This app stores entries in IndexedDB by default. To upgrade to cloud sync later:
-          <ol style="margin:8px 0 0 18px; padding:0; color: var(--muted);">
+          <ol style="margin:8px 0 0 18px; padding:0; color: var(--muted); line-height:1.35;">
             <li>Add login (email/password or Google).</li>
             <li>Replace the <span class="mono">DataStore</span> functions with Firebase/Supabase calls.</li>
-            <li>Keep the same entry format (timestamp, emotion, note, slot time).</li>
+            <li>Keep the same entry format (timestamp, emotionKey, note, slotLabel).</li>
           </ol>
         </div>
       </div>
 
       <div class="card">
         <h2>Data management</h2>
-        <div class="hint">Be careful: deleting clears data in this browser only.</div>
+        <div class="hint">Be careful. Deleting clears data in this browser only.</div>
         <div class="row">
           <button class="btn danger" id="wipeAll">Wipe all data</button>
         </div>
         <div class="divider"></div>
         <div class="small">
-          Tip: if you want a “one-year guarantee,” do weekly JSON exports, or upgrade to cloud sync.
+          Tip: Export JSON monthly for extra safety, or upgrade to cloud sync for multi-device support.
         </div>
       </div>
     </section>
@@ -572,31 +691,31 @@
 
 <script>
 /* =========================
-   Cute Mood Check-In (SPA)
+   Pastel Mood Check-In (SPA)
    IndexedDB storage + sleep-based scheduling
    ========================= */
 
-// ------- Emotion model (color drives UI + “bright vs dark”) -------
 const EMOTIONS = [
-  { key:"happy",   label:"Happy",   emoji:"😊", color:"#FFD166", desc:"bright & light", score:+2 },
-  { key:"calm",    label:"Calm",    emoji:"😌", color:"#7DFFB2", desc:"steady & safe", score:+1 },
-  { key:"neutral", label:"Neutral", emoji:"😐", color:"#B8C0CC", desc:"nothing special", score: 0 },
-  { key:"tired",   label:"Tired",   emoji:"😴", color:"#8B8FA8", desc:"low energy", score:-1 },
-  { key:"anxious", label:"Anxious", emoji:"😰", color:"#5DD6FF", desc:"uneasy thoughts", score:-1 },
-  { key:"sad",     label:"Sad",     emoji:"😟", color:"#3B3F5C", desc:"heavy feelings", score:-2 },
-  { key:"angry",   label:"Angry",   emoji:"😠", color:"#EF4444", desc:"frustrated heat", score:-2 },
+  { key:"happy",   label:"Happy",   emoji:"😊", color:getCss("--emo-happy"),   desc:"bright & warm", score:+2 },
+  { key:"calm",    label:"Calm",    emoji:"😌", color:getCss("--emo-calm"),    desc:"soft & steady", score:+1 },
+  { key:"neutral", label:"Neutral", emoji:"😐", color:getCss("--emo-neutral"), desc:"nothing special", score: 0 },
+  { key:"tired",   label:"Tired",   emoji:"😴", color:getCss("--emo-tired"),   desc:"low energy", score:-1 },
+  { key:"anxious", label:"Anxious", emoji:"😰", color:getCss("--emo-anxious"), desc:"uneasy thoughts", score:-1 },
+  { key:"sad",     label:"Sad",     emoji:"😟", color:getCss("--emo-sad"),     desc:"heavy feelings", score:-2 },
+  { key:"angry",   label:"Angry",   emoji:"😠", color:getCss("--emo-angry"),   desc:"frustrated", score:-2 },
 ];
 
-// ------- App settings (saved to localStorage) -------
+function getCss(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 const DEFAULT_SETTINGS = {
-  sleepStart: "23:00",   // bedtime
-  sleepEnd:   "07:00",   // wake time
+  sleepStart: "23:00",
+  sleepEnd:   "07:00",
   intervalHours: 4
 };
+const SETTINGS_KEY = "moodcheck.settings.v2";
 
-const SETTINGS_KEY = "moodcheck.settings.v1";
-
-// ------- IndexedDB DataStore -------
 const DB_NAME = "moodcheck_db";
 const DB_VERSION = 1;
 const STORE = "entries";
@@ -611,8 +730,8 @@ const DataStore = {
       req.onupgradeneeded = () => {
         const db = req.result;
         const st = db.createObjectStore(STORE, { keyPath: "id" });
-        st.createIndex("byDate", "dateKey", { unique:false });    // YYYY-MM-DD
-        st.createIndex("byTs", "ts", { unique:false });           // ms epoch
+        st.createIndex("byDate", "dateKey", { unique:false });
+        st.createIndex("byTs", "ts", { unique:false });
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
@@ -696,13 +815,9 @@ const DataStore = {
   }
 };
 
-// ------- Helpers -------
 function pad2(n){ return String(n).padStart(2,"0"); }
 function dateKeyFromDate(d){
   return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-}
-function timeLabel(d){
-  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
 function formatPrettyDate(d){
   return d.toLocaleDateString(undefined, { weekday:"short", year:"numeric", month:"short", day:"numeric" });
@@ -715,13 +830,9 @@ function parseTimeToMinutes(hhmm){
   return h*60 + m;
 }
 function minutesToDate(baseDate, minutes){
-  // baseDate is a Date at local midnight
   const d = new Date(baseDate);
   d.setMinutes(minutes, 0, 0);
   return d;
-}
-function sameDay(a,b){
-  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
 }
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
@@ -729,11 +840,11 @@ function getSettings(){
   try{
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return { ...DEFAULT_SETTINGS };
-    const parsed = JSON.parse(raw);
+    const p = JSON.parse(raw);
     return {
-      sleepStart: parsed.sleepStart ?? DEFAULT_SETTINGS.sleepStart,
-      sleepEnd: parsed.sleepEnd ?? DEFAULT_SETTINGS.sleepEnd,
-      intervalHours: clamp(Number(parsed.intervalHours ?? DEFAULT_SETTINGS.intervalHours), 1, 12)
+      sleepStart: p.sleepStart ?? DEFAULT_SETTINGS.sleepStart,
+      sleepEnd: p.sleepEnd ?? DEFAULT_SETTINGS.sleepEnd,
+      intervalHours: clamp(Number(p.intervalHours ?? DEFAULT_SETTINGS.intervalHours), 1, 12)
     };
   }catch{
     return { ...DEFAULT_SETTINGS };
@@ -743,30 +854,19 @@ function saveSettings(s){
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
 }
 
-// ------- Scheduling logic -------
-// For a given date (local), compute awake intervals based on sleepStart and sleepEnd.
-// Supports both "sleep crosses midnight" and "sleep within same day".
 function getAwakeIntervalsForDate(dateMidnight, settings){
   const sStart = parseTimeToMinutes(settings.sleepStart);
   const sEnd   = parseTimeToMinutes(settings.sleepEnd);
 
-  // Case A: sleep crosses midnight (typical): sleepStart > sleepEnd
-  // Awake interval: [sleepEnd, sleepStart)
   if (sStart > sEnd){
     return [{ startMin: sEnd, endMin: sStart }];
   }
-
-  // Case B: sleep within same day: sleepStart <= sleepEnd
-  // Sleep interval: [sleepStart, sleepEnd)
-  // Awake: [00:00, sleepStart) and [sleepEnd, 24:00)
   return [
     { startMin: 0, endMin: sStart },
     { startMin: sEnd, endMin: 24*60 }
-  ].filter(iv => iv.endMin - iv.startMin >= 30); // drop tiny ranges
+  ].filter(iv => (iv.endMin - iv.startMin) >= 30);
 }
 
-// Generate slot times every intervalHours within awake intervals.
-// Slots are anchored at each awake interval start (resets after sleep).
 function generateSlotsForDate(dateMidnight, settings){
   const intervalMin = settings.intervalHours * 60;
   const intervals = getAwakeIntervalsForDate(dateMidnight, settings);
@@ -774,47 +874,11 @@ function generateSlotsForDate(dateMidnight, settings){
   for (const iv of intervals){
     let t = iv.startMin;
     while (t < iv.endMin){
-      // slot time is the moment we want the check-in to represent
-      const slotDate = minutesToDate(dateMidnight, t);
-      slots.push(slotDate);
+      slots.push(minutesToDate(dateMidnight, t));
       t += intervalMin;
     }
   }
-  // remove any slot that lands exactly at end boundary
-  return slots.filter(d => {
-    const mins = d.getHours()*60 + d.getMinutes();
-    return intervals.some(iv => mins >= iv.startMin && mins < iv.endMin);
-  }).sort((a,b)=>a-b);
-}
-
-// Find the "current due slot" relative to now: the most recent slot time <= now that is in awake time.
-// If none (e.g. before first slot), return next upcoming slot.
-function getDueInfo(now, settings){
-  const todayMid = new Date(now); todayMid.setHours(0,0,0,0);
-  const slotsToday = generateSlotsForDate(todayMid, settings);
-
-  const inAwake = isInAwakeTime(now, settings);
-  let prev = null, next = null;
-
-  for (const s of slotsToday){
-    if (s.getTime() <= now.getTime()) prev = s;
-    if (s.getTime() >  now.getTime()){ next = s; break; }
-  }
-
-  // If we are asleep now, show next slot after waking (today or tomorrow).
-  if (!inAwake){
-    // next slot might be later today (if sleep is within day) otherwise tomorrow morning.
-    if (next) return { state:"asleep", dueSlot:null, nextSlot: next };
-    const tomorrowMid = new Date(todayMid); tomorrowMid.setDate(tomorrowMid.getDate()+1);
-    const slotsTomorrow = generateSlotsForDate(tomorrowMid, settings);
-    return { state:"asleep", dueSlot:null, nextSlot: slotsTomorrow[0] ?? null };
-  }
-
-  // If awake and no previous slot (early day), due is next slot (first of day)
-  if (!prev){
-    return { state:"awake", dueSlot: null, nextSlot: slotsToday[0] ?? null };
-  }
-  return { state:"awake", dueSlot: prev, nextSlot: next ?? null };
+  return slots.sort((a,b)=>a-b);
 }
 
 function isInAwakeTime(dt, settings){
@@ -823,14 +887,38 @@ function isInAwakeTime(dt, settings){
   const sEnd   = parseTimeToMinutes(settings.sleepEnd);
 
   if (sStart > sEnd){
-    // awake when mins in [sleepEnd, sleepStart)
     return mins >= sEnd && mins < sStart;
   }
-  // sleep is [sleepStart, sleepEnd), awake otherwise
   return !(mins >= sStart && mins < sEnd);
 }
 
-// ------- UI state -------
+function getDueInfo(now, settings){
+  const todayMid = new Date(now); todayMid.setHours(0,0,0,0);
+  const slotsToday = generateSlotsForDate(todayMid, settings);
+  const inAwake = isInAwakeTime(now, settings);
+
+  let prev = null, next = null;
+  for (const s of slotsToday){
+    if (s.getTime() <= now.getTime()) prev = s;
+    if (s.getTime() > now.getTime()){ next = s; break; }
+  }
+
+  if (!inAwake){
+    if (next) return { state:"asleep", dueSlot:null, nextSlot: next };
+    const tomorrowMid = new Date(todayMid); tomorrowMid.setDate(tomorrowMid.getDate()+1);
+    const slotsTomorrow = generateSlotsForDate(tomorrowMid, settings);
+    return { state:"asleep", dueSlot:null, nextSlot: slotsTomorrow[0] ?? null };
+  }
+
+  if (!slotsToday.length){
+    return { state:"awake", dueSlot:null, nextSlot:null };
+  }
+  if (!prev){
+    return { state:"awake", dueSlot:null, nextSlot: slotsToday[0] ?? null };
+  }
+  return { state:"awake", dueSlot: prev, nextSlot: next ?? null };
+}
+
 let selectedEmotionKey = null;
 
 const els = {
@@ -845,21 +933,18 @@ const els = {
   saveHint: document.getElementById("saveHint"),
   todayList: document.getElementById("todayList"),
 
-  // calendar
   pickDate: document.getElementById("pickDate"),
   jumpToday: document.getElementById("jumpToday"),
   deleteDay: document.getElementById("deleteDay"),
   dayList: document.getElementById("dayList"),
   slotList: document.getElementById("slotList"),
 
-  // insights
   chart: document.getElementById("chart"),
   refreshInsights: document.getElementById("refreshInsights"),
   insightNote: document.getElementById("insightNote"),
   exportJson: document.getElementById("exportJson"),
   exportCsv: document.getElementById("exportCsv"),
 
-  // settings
   sleepStart: document.getElementById("sleepStart"),
   sleepEnd: document.getElementById("sleepEnd"),
   intervalHours: document.getElementById("intervalHours"),
@@ -869,7 +954,6 @@ const els = {
   settingsHint: document.getElementById("settingsHint"),
   wipeAll: document.getElementById("wipeAll"),
 
-  // toast
   toast: document.getElementById("toast"),
   toastTitle: document.getElementById("toastTitle"),
   toastMsg: document.getElementById("toastMsg"),
@@ -882,7 +966,6 @@ function showToast(title, msg){
   setTimeout(()=>els.toast.classList.remove("show"), 2200);
 }
 
-// ------- Render emotions -------
 function renderEmotionButtons(){
   els.emotionGrid.innerHTML = "";
   for (const e of EMOTIONS){
@@ -904,12 +987,20 @@ function renderEmotionButtons(){
   }
 }
 
-// ------- Entry rendering -------
 function emotionByKey(key){
   return EMOTIONS.find(e=>e.key===key) ?? EMOTIONS.find(e=>e.key==="neutral");
 }
 
-function entryCard(entry, withDelete=false){
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function entryCard(entry, withDelete){
   const emo = emotionByKey(entry.emotionKey);
   const d = new Date(entry.ts);
   const div = document.createElement("div");
@@ -941,16 +1032,6 @@ function entryCard(entry, withDelete=false){
   return div;
 }
 
-function escapeHtml(s){
-  return String(s)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-// ------- Main refreshers -------
 async function refreshClockAndDue(){
   const now = new Date();
   els.nowTime.textContent = now.toLocaleTimeString(undefined, { hour:"2-digit", minute:"2-digit" });
@@ -968,18 +1049,17 @@ async function refreshClockAndDue(){
       ? `Next check-in: ${formatPrettyDateTime(info.nextSlot)}`
       : "No slots found. Check your sleep settings.";
     els.saveHint.textContent = "You can still save anyway if you want.";
-    els.saveBtn.disabled = false;
     return;
   }
 
-  // awake
   if (!slots.length){
     els.dueTitle.textContent = "No slots found 😅";
-    els.dueDetails.textContent = "Try adjusting sleep start/end in Settings.";
+    els.dueDetails.textContent = "Try adjusting sleep start or sleep end in Settings.";
     return;
   }
 
   const next = info.nextSlot ? formatPrettyDateTime(info.nextSlot) : "—";
+
   if (!info.dueSlot){
     els.dueTitle.textContent = "First check-in of the day is coming ✨";
     els.dueDetails.textContent = `Next check-in: ${next}`;
@@ -987,12 +1067,11 @@ async function refreshClockAndDue(){
     return;
   }
 
-  // due slot exists
   const due = info.dueSlot;
   const dueLabel = `${pad2(due.getHours())}:${pad2(due.getMinutes())}`;
   els.dueTitle.textContent = `Current slot: ${dueLabel}`;
   els.dueDetails.textContent = `Next check-in: ${next}`;
-  els.saveHint.textContent = "Save to log how you feel in this 4-hour window.";
+  els.saveHint.textContent = "Save to log how you feel in this window.";
 }
 
 async function refreshTodayList(){
@@ -1008,8 +1087,6 @@ async function refreshTodayList(){
     els.todayList.appendChild(div);
     return;
   }
-
-  // newest first for this panel
   for (const e of entries.slice().reverse()){
     els.todayList.appendChild(entryCard(e, false));
   }
@@ -1027,7 +1104,6 @@ async function refreshDayView(){
   const slots = generateSlotsForDate(dateMid, settings);
   const entries = await DataStore.getByDate(dateKey);
 
-  // entries list
   els.dayList.innerHTML = "";
   if (!entries.length){
     const div = document.createElement("div");
@@ -1040,7 +1116,6 @@ async function refreshDayView(){
     }
   }
 
-  // slots list
   els.slotList.innerHTML = "";
   if (!slots.length){
     const div = document.createElement("div");
@@ -1053,18 +1128,17 @@ async function refreshDayView(){
       card.className = "entry";
       card.innerHTML = `
         <div class="entryTop">
-          <div class="tag"><i style="background:#7c5cff"></i> Slot</div>
+          <div class="tag"><i style="background:${getCss("--accent")}"></i> Slot</div>
           <div class="entryTime">${formatPrettyDateTime(s)}</div>
         </div>
-        <div class="small">This is a scheduled check-in time (awake only).</div>
+        <div class="small">Scheduled check-in time (awake only).</div>
       `;
       els.slotList.appendChild(card);
     }
   }
 }
 
-// ------- Save entry -------
-function buildEntry({forceOffSlot=false}){
+function buildEntry(forceOffSlot){
   const now = new Date();
   const settings = getSettings();
   const info = getDueInfo(now, settings);
@@ -1072,9 +1146,6 @@ function buildEntry({forceOffSlot=false}){
   const emotionKey = selectedEmotionKey ?? "neutral";
   const note = els.noteBox.value.trim();
 
-  // slot label:
-  // - If we are awake and have a due slot, we label with that slot time.
-  // - Otherwise we label "off-slot".
   let slotLabel = "off-slot";
   if (!forceOffSlot && info.state === "awake" && info.dueSlot){
     slotLabel = `${pad2(info.dueSlot.getHours())}:${pad2(info.dueSlot.getMinutes())}`;
@@ -1084,108 +1155,32 @@ function buildEntry({forceOffSlot=false}){
     id: crypto.randomUUID(),
     ts: now.getTime(),
     dateKey: dateKeyFromDate(now),
-    tzOffsetMin: now.getTimezoneOffset(),  // helps future cloud sync if needed
+    tzOffsetMin: now.getTimezoneOffset(),
     emotionKey,
     note,
     slotLabel
   };
 }
 
-async function saveEntry(forceOffSlot=false){
-  const entry = buildEntry({forceOffSlot});
+async function saveEntry(forceOffSlot){
+  const entry = buildEntry(forceOffSlot);
   await DataStore.put(entry);
+
   els.noteBox.value = "";
   selectedEmotionKey = null;
   document.querySelectorAll(".emo").forEach(x=>x.classList.remove("selected"));
   els.saveHint.textContent = "Saved. Pick an emotion for the next one.";
 
   const emo = emotionByKey(entry.emotionKey);
-  showToast("Saved!", `${emo.emoji} ${emo.label} at ${new Date(entry.ts).toLocaleTimeString(undefined, {hour:"2-digit", minute:"2-digit"})}`);
+  showToast("Saved!", `${emo.emoji} ${emo.label} saved`);
 
   await refreshTodayList();
   await refreshDayView();
   await refreshInsights();
 }
 
-// ------- Insights chart (simple weekly bar of average score per day) -------
-function drawChart(canvas, points, labels){
-  const ctx = canvas.getContext("2d");
-  const rect = canvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = Math.floor(rect.width * dpr);
-  canvas.height = Math.floor(rect.height * dpr);
-  ctx.scale(dpr, dpr);
-
-  // clear
-  ctx.clearRect(0,0,rect.width,rect.height);
-
-  // frame
-  const pad = 18;
-  const w = rect.width, h = rect.height;
-  const innerW = w - pad*2;
-  const innerH = h - pad*2;
-
-  // baseline & range
-  const minY = -2.2;
-  const maxY =  2.2;
-
-  // axes
-  ctx.globalAlpha = 0.8;
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "rgba(17,24,39,.15)";
-  ctx.beginPath();
-  ctx.moveTo(pad, pad);
-  ctx.lineTo(pad, h-pad);
-  ctx.lineTo(w-pad, h-pad);
-  ctx.stroke();
-
-  // grid lines (0 line)
-  const y0 = pad + innerH * (maxY / (maxY - minY));
-  ctx.strokeStyle = "rgba(17,24,39,.10)";
-  ctx.beginPath();
-  ctx.moveTo(pad, y0);
-  ctx.lineTo(w-pad, y0);
-  ctx.stroke();
-
-  // bars
-  const n = points.length;
-  const gap = 10;
-  const barW = (innerW - gap*(n-1)) / n;
-  for (let i=0; i<n; i++){
-    const val = points[i];
-    const x = pad + i*(barW + gap);
-
-    const yVal = pad + innerH * ((maxY - val) / (maxY - minY));
-    const yBase = y0;
-    const top = Math.min(yVal, yBase);
-    const height = Math.abs(yBase - yVal);
-
-    // color: map val -> emotion vibe
-    // (bright if positive, darker if negative)
-    let color = "rgba(184,192,204,.9)"; // neutral
-    if (val >= 1) color = "rgba(255,209,102,.92)";      // happy-ish
-    else if (val > 0) color = "rgba(125,255,178,.88)";  // calm-ish
-    else if (val <= -1.5) color = "rgba(59,63,92,.92)"; // sad-ish
-    else if (val < 0) color = "rgba(139,143,168,.9)";   // tired/anxious-ish
-
-    ctx.fillStyle = color;
-    roundRect(ctx, x, top, barW, Math.max(2, height), 10, true, false);
-
-    // label
-    ctx.fillStyle = "rgba(17,24,39,.72)";
-    ctx.font = "11px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
-    ctx.textAlign = "center";
-    ctx.fillText(labels[i], x + barW/2, h - 6);
-  }
-
-  // title
-  ctx.fillStyle = "rgba(17,24,39,.85)";
-  ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
-  ctx.textAlign = "left";
-  ctx.fillText("Average mood score per day (last 7 days)", pad, 14);
-}
-
-function roundRect(ctx, x, y, w, h, r, fill, stroke){
+/* Insights: weekly average mood score */
+function roundRect(ctx, x, y, w, h, r){
   r = Math.min(r, w/2, h/2);
   ctx.beginPath();
   ctx.moveTo(x+r, y);
@@ -1194,8 +1189,74 @@ function roundRect(ctx, x, y, w, h, r, fill, stroke){
   ctx.arcTo(x, y+h, x, y, r);
   ctx.arcTo(x, y, x+w, y, r);
   ctx.closePath();
-  if (fill) ctx.fill();
-  if (stroke) ctx.stroke();
+  ctx.fill();
+}
+
+function drawChart(canvas, points, labels){
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(rect.width * dpr);
+  canvas.height = Math.floor(rect.height * dpr);
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width, h = rect.height;
+  ctx.clearRect(0,0,w,h);
+
+  const pad = 18;
+  const innerW = w - pad*2;
+  const innerH = h - pad*2;
+
+  const minY = -2.2;
+  const maxY =  2.2;
+
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(44,36,51,.14)";
+  ctx.beginPath();
+  ctx.moveTo(pad, pad);
+  ctx.lineTo(pad, h-pad);
+  ctx.lineTo(w-pad, h-pad);
+  ctx.stroke();
+
+  const y0 = pad + innerH * (maxY / (maxY - minY));
+  ctx.strokeStyle = "rgba(44,36,51,.10)";
+  ctx.beginPath();
+  ctx.moveTo(pad, y0);
+  ctx.lineTo(w-pad, y0);
+  ctx.stroke();
+
+  const n = points.length;
+  const gap = 10;
+  const barW = (innerW - gap*(n-1)) / n;
+
+  for (let i=0; i<n; i++){
+    const val = points[i];
+    const x = pad + i*(barW + gap);
+
+    const yVal = pad + innerH * ((maxY - val) / (maxY - minY));
+    const top = Math.min(yVal, y0);
+    const height = Math.max(2, Math.abs(y0 - yVal));
+
+    /* Pastel mapping */
+    let color = getCss("--emo-neutral");
+    if (val >= 1) color = getCss("--emo-happy");
+    else if (val > 0) color = getCss("--emo-calm");
+    else if (val <= -1.5) color = getCss("--emo-sad");
+    else if (val < 0) color = getCss("--emo-tired");
+
+    ctx.fillStyle = color;
+    roundRect(ctx, x, top, barW, height, 12);
+
+    ctx.fillStyle = "rgba(44,36,51,.72)";
+    ctx.font = "11px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    ctx.textAlign = "center";
+    ctx.fillText(labels[i], x + barW/2, h - 6);
+  }
+
+  ctx.fillStyle = "rgba(44,36,51,.82)";
+  ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+  ctx.textAlign = "left";
+  ctx.fillText("Average mood score per day (last 7 days)", pad, 14);
 }
 
 async function refreshInsights(){
@@ -1205,7 +1266,7 @@ async function refreshInsights(){
 
   const entries = await DataStore.getRangeByTs(start.getTime(), end.getTime());
 
-  const byDay = new Map(); // dateKey -> {sum,count}
+  const byDay = new Map();
   for (let i=0; i<7; i++){
     const d = new Date(start); d.setDate(start.getDate()+i);
     byDay.set(dateKeyFromDate(d), { sum:0, count:0, date: d });
@@ -1222,7 +1283,7 @@ async function refreshInsights(){
 
   const points = [];
   const labels = [];
-  for (const [k, v] of byDay.entries()){
+  for (const v of byDay.values()){
     points.push(v.count ? (v.sum / v.count) : 0);
     labels.push(v.date.toLocaleDateString(undefined, { weekday:"short" }));
   }
@@ -1235,7 +1296,7 @@ async function refreshInsights(){
     : "No check-ins in the last 7 days yet. Save a few to see trends.";
 }
 
-// ------- Export -------
+/* Export */
 function downloadFile(filename, content, mime){
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
@@ -1247,13 +1308,16 @@ function downloadFile(filename, content, mime){
   a.remove();
   URL.revokeObjectURL(url);
 }
-
+function csvEscape(s){
+  const str = String(s);
+  if (/[,"\n]/.test(str)) return `"${str.replaceAll('"','""')}"`;
+  return str;
+}
 async function exportJSON(){
   const all = await DataStore.getAll();
   downloadFile(`mood-checkin-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(all, null, 2), "application/json");
-  showToast("Exported", "JSON file downloaded.");
+  showToast("Exported", "JSON downloaded.");
 }
-
 async function exportCSV(){
   const all = await DataStore.getAll();
   const header = ["id","ts","localDateTime","dateKey","emotionKey","slotLabel","note","tzOffsetMin"];
@@ -1261,7 +1325,7 @@ async function exportCSV(){
   for (const e of all){
     const d = new Date(e.ts);
     const localDateTime = d.toLocaleString();
-    const row = [
+    rows.push([
       e.id,
       e.ts,
       csvEscape(localDateTime),
@@ -1270,29 +1334,21 @@ async function exportCSV(){
       e.slotLabel ?? "",
       csvEscape(e.note ?? ""),
       e.tzOffsetMin
-    ];
-    rows.push(row.join(","));
+    ].join(","));
   }
   downloadFile(`mood-checkin-${new Date().toISOString().slice(0,10)}.csv`, rows.join("\n"), "text/csv");
-  showToast("Exported", "CSV file downloaded.");
+  showToast("Exported", "CSV downloaded.");
 }
 
-function csvEscape(s){
-  const str = String(s);
-  if (/[,"\n]/.test(str)) return `"${str.replaceAll('"','""')}"`;
-  return str;
-}
-
-// ------- Tabs -------
+/* Tabs */
 function setView(view){
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.view===view));
-  document.getElementById("view-checkin").style.display = (view==="checkin") ? "" : "none";
+  document.getElementById("view-checkin").style.display  = (view==="checkin") ? "" : "none";
   document.getElementById("view-calendar").style.display = (view==="calendar") ? "" : "none";
   document.getElementById("view-insights").style.display = (view==="insights") ? "" : "none";
   document.getElementById("view-settings").style.display = (view==="settings") ? "" : "none";
 }
 
-// ------- Notifications (optional, only works when site is open or via service worker if you add later) -------
 async function enableNotifications(){
   if (!("Notification" in window)){
     els.notifState.textContent = "Not supported in this browser";
@@ -1301,11 +1357,11 @@ async function enableNotifications(){
   const perm = await Notification.requestPermission();
   els.notifState.textContent = perm === "granted" ? "Enabled" : "Not enabled";
   if (perm === "granted"){
-    showToast("Notifications enabled", "Tip: for true background reminders, add a service worker later.");
+    showToast("Notifications enabled", "Tip: background reminders need a service worker later.");
   }
 }
 
-// ------- Settings UI -------
+/* Settings UI */
 function loadSettingsUI(){
   const s = getSettings();
   els.sleepStart.value = s.sleepStart;
@@ -1318,7 +1374,6 @@ function loadSettingsUI(){
     els.notifState.textContent = "Not supported";
   }
 }
-
 async function applySettingsFromUI(){
   const s = {
     sleepStart: els.sleepStart.value || DEFAULT_SETTINGS.sleepStart,
@@ -1326,22 +1381,21 @@ async function applySettingsFromUI(){
     intervalHours: clamp(Number(els.intervalHours.value || DEFAULT_SETTINGS.intervalHours), 1, 12),
   };
   saveSettings(s);
-  els.settingsHint.textContent = `Saved. Awake slots will use sleep ${s.sleepStart} → ${s.sleepEnd}.`;
+  els.settingsHint.textContent = `Saved. Sleep: ${s.sleepStart} to ${s.sleepEnd}.`;
   showToast("Saved", "Your schedule settings were updated.");
-
   await refreshClockAndDue();
   await refreshTodayList();
   await refreshDayView();
   await refreshInsights();
 }
 
-// ------- Calendar date default -------
+/* Calendar */
 function setCalendarToToday(){
   const now = new Date();
   els.pickDate.value = dateKeyFromDate(now);
 }
 
-// ------- Wire up events -------
+/* Wire events */
 document.querySelectorAll(".tab").forEach(btn=>{
   btn.addEventListener("click", async ()=>{
     const v = btn.dataset.view;
@@ -1352,28 +1406,20 @@ document.querySelectorAll(".tab").forEach(btn=>{
   });
 });
 
-els.saveBtn.addEventListener("click", async ()=>{
-  // Save using the current scheduled slot label when possible
-  await saveEntry(false);
-});
-els.saveOffSlotBtn.addEventListener("click", async ()=>{
-  await saveEntry(true);
-});
+els.saveBtn.addEventListener("click", async ()=>{ await saveEntry(false); });
+els.saveOffSlotBtn.addEventListener("click", async ()=>{ await saveEntry(true); });
 
 els.jumpToday.addEventListener("click", async ()=>{
   setCalendarToToday();
   await refreshDayView();
 });
-
-els.pickDate.addEventListener("change", async ()=>{
-  await refreshDayView();
-});
+els.pickDate.addEventListener("change", refreshDayView);
 
 els.deleteDay.addEventListener("click", async ()=>{
   const dateStr = els.pickDate.value;
   if (!dateStr) return;
   const deletedCount = await DataStore.deleteByDate(dateStr);
-  showToast("Deleted", `Removed ${deletedCount} entr${deletedCount===1?"y":"ies"} on ${dateStr}.`);
+  showToast("Deleted", `Removed ${deletedCount} entries on ${dateStr}.`);
   await refreshDayView();
   await refreshTodayList();
   await refreshInsights();
@@ -1396,7 +1442,7 @@ els.wipeAll.addEventListener("click", async ()=>{
   await refreshInsights();
 });
 
-// ------- Init -------
+/* Init */
 (async function init(){
   renderEmotionButtons();
   loadSettingsUI();
@@ -1408,17 +1454,14 @@ els.wipeAll.addEventListener("click", async ()=>{
   await refreshDayView();
   await refreshInsights();
 
-  // update clock + due info every 30 seconds
   setInterval(refreshClockAndDue, 30000);
 
-  // Optional: gentle notification when check-in becomes due (only while page open)
   setInterval(async ()=>{
     const settings = getSettings();
     const now = new Date();
     const info = getDueInfo(now, settings);
 
     if ("Notification" in window && Notification.permission === "granted"){
-      // Notify within first 2 minutes after a slot time
       if (info.state==="awake" && info.dueSlot){
         const diff = now.getTime() - info.dueSlot.getTime();
         if (diff >= 0 && diff < 2*60*1000){
