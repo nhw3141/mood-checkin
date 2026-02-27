@@ -1,0 +1,1433 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mood Check-In</title>
+  <style>
+    :root{
+      --bg1:#fff7fb;
+      --bg2:#f3fbff;
+      --card:#ffffffcc;
+      --ink:#2b2b2b;
+      --muted:#6b7280;
+      --ring:#1118271a;
+      --shadow: 0 12px 30px rgba(0,0,0,.08);
+      --radius: 22px;
+      --btn-radius: 16px;
+      --border: 1px solid rgba(17,24,39,.10);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, var(--bg1), transparent 55%),
+        linear-gradient(180deg, #ffffff, #fafafa);
+      min-height:100vh;
+      padding: 18px;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: conic-gradient(from 220deg, #ffcc66, #ff6fae, #7c5cff, #5dd6ff, #7dffb2, #ffcc66);
+      box-shadow: var(--shadow);
+      border: var(--border);
+    }
+
+    h1{
+      margin:0;
+      font-size: 18px;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nowbox{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap: 2px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .nowbox b{
+      color: var(--ink);
+      font-size: 13px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #ffffffb3;
+      border: var(--border);
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      white-space:nowrap;
+    }
+
+    nav{
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+    .tab{
+      border: var(--border);
+      background:#fff;
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight: 600;
+      font-size: 13px;
+      box-shadow: 0 10px 20px rgba(0,0,0,.05);
+      transition: transform .06s ease, box-shadow .2s ease;
+    }
+    .tab:active{transform: translateY(1px)}
+    .tab.active{
+      outline: 3px solid rgba(124,92,255,.18);
+      border-color: rgba(124,92,255,.35);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns: 1fr}
+      .nowbox{align-items:flex-start}
+      header{flex-direction:column; align-items:flex-start}
+    }
+
+    .card{
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size: 15px;
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: -6px;
+      margin-bottom: 10px;
+    }
+
+    .due{
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px dashed rgba(17,24,39,.18);
+      background: rgba(255,255,255,.7);
+    }
+    .dot{
+      width: 10px; height:10px; border-radius:999px;
+      background:#7c5cff;
+      margin-top:4px;
+      box-shadow: 0 0 0 6px rgba(124,92,255,.12);
+      flex: 0 0 auto;
+    }
+    .due b{display:block}
+    .mono{font-family: var(--mono)}
+
+    .emotions{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 540px){
+      .emotions{grid-template-columns: repeat(2, minmax(0, 1fr))}
+    }
+
+    .emo{
+      border: var(--border);
+      border-radius: var(--btn-radius);
+      padding: 12px 10px;
+      cursor:pointer;
+      background:#fff;
+      box-shadow: 0 10px 18px rgba(0,0,0,.05);
+      transition: transform .06s ease, box-shadow .2s ease, outline .2s ease;
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      align-items:flex-start;
+      min-height: 70px;
+      position:relative;
+      overflow:hidden;
+    }
+    .emo:active{transform: translateY(1px)}
+    .emo .name{font-weight:800; font-size: 13px}
+    .emo .desc{font-size: 11px; color: var(--muted)}
+    .emo .swatch{
+      position:absolute;
+      right:-20px; top:-20px;
+      width: 80px; height: 80px;
+      border-radius: 999px;
+      filter: blur(0px);
+      opacity: .22;
+    }
+    .emo.selected{
+      outline: 3px solid rgba(17,24,39,.12);
+      border-color: rgba(17,24,39,.22);
+      box-shadow: 0 14px 28px rgba(0,0,0,.08);
+    }
+
+    textarea{
+      width:100%;
+      border-radius: 16px;
+      border: var(--border);
+      padding: 12px;
+      font-family: var(--sans);
+      font-size: 13px;
+      resize: vertical;
+      min-height: 110px;
+      outline:none;
+      background: rgba(255,255,255,.85);
+    }
+    textarea:focus{
+      outline: 3px solid rgba(93,214,255,.22);
+      border-color: rgba(93,214,255,.35);
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border: var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor:pointer;
+      background:#fff;
+      box-shadow: 0 10px 18px rgba(0,0,0,.05);
+      font-weight:800;
+      font-size: 13px;
+      transition: transform .06s ease, box-shadow .2s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(255,111,174,.95));
+      color:#fff;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .btn.ghost{
+      background: rgba(255,255,255,.70);
+    }
+    .btn.danger{
+      background: linear-gradient(135deg, rgba(17,24,39,.92), rgba(239,68,68,.86));
+      color:#fff;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .small{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(17,24,39,.10);
+      margin: 12px 0;
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .entry{
+      border: var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.78);
+      padding: 12px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.05);
+    }
+    .entryTop{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight:900;
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.7);
+    }
+    .tag i{
+      width:10px;height:10px;border-radius:999px; display:inline-block;
+      background: #999;
+    }
+    .entryTime{
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .entryNote{
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.35;
+      white-space:pre-wrap;
+    }
+
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 540px){
+      .formGrid{grid-template-columns:1fr}
+    }
+
+    label{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    input[type="time"], input[type="number"], input[type="date"]{
+      border: var(--border);
+      border-radius: 14px;
+      padding: 10px 10px;
+      background: rgba(255,255,255,.85);
+      font-family: var(--sans);
+      font-size: 13px;
+      outline:none;
+    }
+    input:focus{
+      outline: 3px solid rgba(255,204,102,.28);
+      border-color: rgba(255,204,102,.45);
+    }
+
+    canvas{
+      width:100%;
+      height:260px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.75);
+      border: var(--border);
+      box-shadow: 0 10px 18px rgba(0,0,0,.05);
+    }
+
+    .toast{
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      right: 18px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.92);
+      border: var(--border);
+      box-shadow: 0 18px 40px rgba(0,0,0,.12);
+      display:none;
+      gap: 10px;
+      align-items:flex-start;
+      z-index: 50;
+    }
+    .toast.show{display:flex}
+    .toast .tDot{width:10px;height:10px;border-radius:999px;background:#7dffb2;box-shadow:0 0 0 6px rgba(125,255,178,.18); margin-top:4px;}
+    .toast .tText{font-size: 13px; line-height:1.25;}
+    .toast .tText b{display:block}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Mood Check-In</h1>
+          <div class="sub">A cute little 4-hour emotion tracker (awake time only)</div>
+        </div>
+      </div>
+
+      <div class="nowbox">
+        <div class="pill"><span>Local time:</span> <b id="nowTime">—</b></div>
+        <div class="pill"><span>Today:</span> <b id="nowDate">—</b></div>
+      </div>
+    </header>
+
+    <nav>
+      <button class="tab active" data-view="checkin">Check-In</button>
+      <button class="tab" data-view="calendar">Calendar</button>
+      <button class="tab" data-view="insights">Insights</button>
+      <button class="tab" data-view="settings">Settings</button>
+    </nav>
+
+    <!-- CHECK-IN VIEW -->
+    <section class="grid" id="view-checkin">
+      <div class="card">
+        <h2>How do you feel right now?</h2>
+        <div class="hint">Pick one emotion, add a note if you want, then save.</div>
+
+        <div class="due">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <b id="dueTitle">Loading your schedule…</b>
+            <div class="small" id="dueDetails"></div>
+          </div>
+        </div>
+
+        <div class="emotions" id="emotionGrid"></div>
+
+        <div class="divider"></div>
+
+        <label for="noteBox">Notes (optional)</label>
+        <textarea id="noteBox" placeholder="What happened? What triggered this feeling? Anything you want to remember later…"></textarea>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="saveBtn">Save check-in</button>
+          <button class="btn ghost" id="saveOffSlotBtn" title="Saves an entry for the current moment even if it isn't a scheduled slot.">Save anyway</button>
+          <span class="small" id="saveHint"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Today so far</h2>
+        <div class="hint">Your check-ins for today (real timestamps).</div>
+        <div class="list" id="todayList"></div>
+      </div>
+    </section>
+
+    <!-- CALENDAR VIEW -->
+    <section class="grid" id="view-calendar" style="display:none;">
+      <div class="card">
+        <h2>Calendar</h2>
+        <div class="hint">Pick a date to review your feelings and notes.</div>
+
+        <div class="formGrid">
+          <label>
+            Date
+            <input type="date" id="pickDate" />
+          </label>
+          <label>
+            Quick actions
+            <div class="row">
+              <button class="btn" id="jumpToday">Today</button>
+              <button class="btn danger" id="deleteDay">Delete this day</button>
+            </div>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+        <div class="list" id="dayList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Scheduled slots (awake only)</h2>
+        <div class="hint">This is what “every 4 hours” means for the selected date based on your sleep schedule.</div>
+        <div class="list" id="slotList"></div>
+      </div>
+    </section>
+
+    <!-- INSIGHTS VIEW -->
+    <section class="grid" id="view-insights" style="display:none;">
+      <div class="card">
+        <h2>Insights</h2>
+        <div class="hint">A simple weekly snapshot based on your saved check-ins.</div>
+        <canvas id="chart"></canvas>
+        <div class="divider"></div>
+        <div class="row">
+          <button class="btn" id="refreshInsights">Refresh</button>
+          <span class="small" id="insightNote"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Export & backup</h2>
+        <div class="hint">Recommended if you want extra safety. Exporting does not delete anything.</div>
+        <div class="row">
+          <button class="btn" id="exportJson">Export JSON</button>
+          <button class="btn" id="exportCsv">Export CSV</button>
+        </div>
+        <div class="divider"></div>
+        <div class="small">
+          Storage: <b>IndexedDB</b> in this browser. It can store 1+ years of entries easily.
+          For multi-device sync, you can later plug in Firebase/Supabase (notes in Settings).
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS VIEW -->
+    <section class="grid" id="view-settings" style="display:none;">
+      <div class="card">
+        <h2>Schedule settings</h2>
+        <div class="hint">Set your sleep time. Check-ins happen every 4 hours during your awake time only.</div>
+
+        <div class="formGrid">
+          <label>
+            Sleep starts (bedtime)
+            <input type="time" id="sleepStart" />
+          </label>
+          <label>
+            Sleep ends (wake time)
+            <input type="time" id="sleepEnd" />
+          </label>
+          <label>
+            Check-in interval (hours)
+            <input type="number" id="intervalHours" min="1" max="12" step="1" />
+          </label>
+          <label>
+            Notifications (optional)
+            <div class="row">
+              <button class="btn" id="enableNotifs">Enable</button>
+              <span class="small" id="notifState">Not enabled</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+        <div class="row">
+          <button class="btn primary" id="saveSettings">Save settings</button>
+          <span class="small" id="settingsHint"></span>
+        </div>
+
+        <div class="divider"></div>
+        <h2 style="margin-top:0;">Cloud sync upgrade path</h2>
+        <div class="small">
+          This app stores entries in IndexedDB by default. To upgrade to cloud sync later:
+          <ol style="margin:8px 0 0 18px; padding:0; color: var(--muted);">
+            <li>Add login (email/password or Google).</li>
+            <li>Replace the <span class="mono">DataStore</span> functions with Firebase/Supabase calls.</li>
+            <li>Keep the same entry format (timestamp, emotion, note, slot time).</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Data management</h2>
+        <div class="hint">Be careful: deleting clears data in this browser only.</div>
+        <div class="row">
+          <button class="btn danger" id="wipeAll">Wipe all data</button>
+        </div>
+        <div class="divider"></div>
+        <div class="small">
+          Tip: if you want a “one-year guarantee,” do weekly JSON exports, or upgrade to cloud sync.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">
+    <div class="tDot" aria-hidden="true"></div>
+    <div class="tText">
+      <b id="toastTitle">Saved!</b>
+      <span id="toastMsg">Your check-in was stored.</span>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   Cute Mood Check-In (SPA)
+   IndexedDB storage + sleep-based scheduling
+   ========================= */
+
+// ------- Emotion model (color drives UI + “bright vs dark”) -------
+const EMOTIONS = [
+  { key:"happy",   label:"Happy",   emoji:"😊", color:"#FFD166", desc:"bright & light", score:+2 },
+  { key:"calm",    label:"Calm",    emoji:"😌", color:"#7DFFB2", desc:"steady & safe", score:+1 },
+  { key:"neutral", label:"Neutral", emoji:"😐", color:"#B8C0CC", desc:"nothing special", score: 0 },
+  { key:"tired",   label:"Tired",   emoji:"😴", color:"#8B8FA8", desc:"low energy", score:-1 },
+  { key:"anxious", label:"Anxious", emoji:"😰", color:"#5DD6FF", desc:"uneasy thoughts", score:-1 },
+  { key:"sad",     label:"Sad",     emoji:"😟", color:"#3B3F5C", desc:"heavy feelings", score:-2 },
+  { key:"angry",   label:"Angry",   emoji:"😠", color:"#EF4444", desc:"frustrated heat", score:-2 },
+];
+
+// ------- App settings (saved to localStorage) -------
+const DEFAULT_SETTINGS = {
+  sleepStart: "23:00",   // bedtime
+  sleepEnd:   "07:00",   // wake time
+  intervalHours: 4
+};
+
+const SETTINGS_KEY = "moodcheck.settings.v1";
+
+// ------- IndexedDB DataStore -------
+const DB_NAME = "moodcheck_db";
+const DB_VERSION = 1;
+const STORE = "entries";
+
+const DataStore = {
+  db: null,
+
+  async open(){
+    if (this.db) return this.db;
+    this.db = await new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        const st = db.createObjectStore(STORE, { keyPath: "id" });
+        st.createIndex("byDate", "dateKey", { unique:false });    // YYYY-MM-DD
+        st.createIndex("byTs", "ts", { unique:false });           // ms epoch
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+    return this.db;
+  },
+
+  async put(entry){
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).put(entry);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+
+  async getByDate(dateKey){
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readonly");
+      const idx = tx.objectStore(STORE).index("byDate");
+      const req = idx.getAll(dateKey);
+      req.onsuccess = () => resolve(req.result.sort((a,b)=>a.ts-b.ts));
+      req.onerror = () => reject(req.error);
+    });
+  },
+
+  async getRangeByTs(minTs, maxTs){
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readonly");
+      const idx = tx.objectStore(STORE).index("byTs");
+      const range = IDBKeyRange.bound(minTs, maxTs, false, false);
+      const req = idx.getAll(range);
+      req.onsuccess = () => resolve(req.result.sort((a,b)=>a.ts-b.ts));
+      req.onerror = () => reject(req.error);
+    });
+  },
+
+  async getAll(){
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result.sort((a,b)=>a.ts-b.ts));
+      req.onerror = () => reject(req.error);
+    });
+  },
+
+  async deleteById(id){
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).delete(id);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+
+  async deleteByDate(dateKey){
+    const entries = await this.getByDate(dateKey);
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      const st = tx.objectStore(STORE);
+      for (const e of entries) st.delete(e.id);
+      tx.oncomplete = () => resolve(entries.length);
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+
+  async wipeAll(){
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).clear();
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+};
+
+// ------- Helpers -------
+function pad2(n){ return String(n).padStart(2,"0"); }
+function dateKeyFromDate(d){
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+function timeLabel(d){
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+function formatPrettyDate(d){
+  return d.toLocaleDateString(undefined, { weekday:"short", year:"numeric", month:"short", day:"numeric" });
+}
+function formatPrettyDateTime(d){
+  return d.toLocaleString(undefined, { weekday:"short", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
+}
+function parseTimeToMinutes(hhmm){
+  const [h,m] = hhmm.split(":").map(Number);
+  return h*60 + m;
+}
+function minutesToDate(baseDate, minutes){
+  // baseDate is a Date at local midnight
+  const d = new Date(baseDate);
+  d.setMinutes(minutes, 0, 0);
+  return d;
+}
+function sameDay(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+function getSettings(){
+  try{
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return { ...DEFAULT_SETTINGS };
+    const parsed = JSON.parse(raw);
+    return {
+      sleepStart: parsed.sleepStart ?? DEFAULT_SETTINGS.sleepStart,
+      sleepEnd: parsed.sleepEnd ?? DEFAULT_SETTINGS.sleepEnd,
+      intervalHours: clamp(Number(parsed.intervalHours ?? DEFAULT_SETTINGS.intervalHours), 1, 12)
+    };
+  }catch{
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+function saveSettings(s){
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+}
+
+// ------- Scheduling logic -------
+// For a given date (local), compute awake intervals based on sleepStart and sleepEnd.
+// Supports both "sleep crosses midnight" and "sleep within same day".
+function getAwakeIntervalsForDate(dateMidnight, settings){
+  const sStart = parseTimeToMinutes(settings.sleepStart);
+  const sEnd   = parseTimeToMinutes(settings.sleepEnd);
+
+  // Case A: sleep crosses midnight (typical): sleepStart > sleepEnd
+  // Awake interval: [sleepEnd, sleepStart)
+  if (sStart > sEnd){
+    return [{ startMin: sEnd, endMin: sStart }];
+  }
+
+  // Case B: sleep within same day: sleepStart <= sleepEnd
+  // Sleep interval: [sleepStart, sleepEnd)
+  // Awake: [00:00, sleepStart) and [sleepEnd, 24:00)
+  return [
+    { startMin: 0, endMin: sStart },
+    { startMin: sEnd, endMin: 24*60 }
+  ].filter(iv => iv.endMin - iv.startMin >= 30); // drop tiny ranges
+}
+
+// Generate slot times every intervalHours within awake intervals.
+// Slots are anchored at each awake interval start (resets after sleep).
+function generateSlotsForDate(dateMidnight, settings){
+  const intervalMin = settings.intervalHours * 60;
+  const intervals = getAwakeIntervalsForDate(dateMidnight, settings);
+  const slots = [];
+  for (const iv of intervals){
+    let t = iv.startMin;
+    while (t < iv.endMin){
+      // slot time is the moment we want the check-in to represent
+      const slotDate = minutesToDate(dateMidnight, t);
+      slots.push(slotDate);
+      t += intervalMin;
+    }
+  }
+  // remove any slot that lands exactly at end boundary
+  return slots.filter(d => {
+    const mins = d.getHours()*60 + d.getMinutes();
+    return intervals.some(iv => mins >= iv.startMin && mins < iv.endMin);
+  }).sort((a,b)=>a-b);
+}
+
+// Find the "current due slot" relative to now: the most recent slot time <= now that is in awake time.
+// If none (e.g. before first slot), return next upcoming slot.
+function getDueInfo(now, settings){
+  const todayMid = new Date(now); todayMid.setHours(0,0,0,0);
+  const slotsToday = generateSlotsForDate(todayMid, settings);
+
+  const inAwake = isInAwakeTime(now, settings);
+  let prev = null, next = null;
+
+  for (const s of slotsToday){
+    if (s.getTime() <= now.getTime()) prev = s;
+    if (s.getTime() >  now.getTime()){ next = s; break; }
+  }
+
+  // If we are asleep now, show next slot after waking (today or tomorrow).
+  if (!inAwake){
+    // next slot might be later today (if sleep is within day) otherwise tomorrow morning.
+    if (next) return { state:"asleep", dueSlot:null, nextSlot: next };
+    const tomorrowMid = new Date(todayMid); tomorrowMid.setDate(tomorrowMid.getDate()+1);
+    const slotsTomorrow = generateSlotsForDate(tomorrowMid, settings);
+    return { state:"asleep", dueSlot:null, nextSlot: slotsTomorrow[0] ?? null };
+  }
+
+  // If awake and no previous slot (early day), due is next slot (first of day)
+  if (!prev){
+    return { state:"awake", dueSlot: null, nextSlot: slotsToday[0] ?? null };
+  }
+  return { state:"awake", dueSlot: prev, nextSlot: next ?? null };
+}
+
+function isInAwakeTime(dt, settings){
+  const mins = dt.getHours()*60 + dt.getMinutes();
+  const sStart = parseTimeToMinutes(settings.sleepStart);
+  const sEnd   = parseTimeToMinutes(settings.sleepEnd);
+
+  if (sStart > sEnd){
+    // awake when mins in [sleepEnd, sleepStart)
+    return mins >= sEnd && mins < sStart;
+  }
+  // sleep is [sleepStart, sleepEnd), awake otherwise
+  return !(mins >= sStart && mins < sEnd);
+}
+
+// ------- UI state -------
+let selectedEmotionKey = null;
+
+const els = {
+  nowTime: document.getElementById("nowTime"),
+  nowDate: document.getElementById("nowDate"),
+  dueTitle: document.getElementById("dueTitle"),
+  dueDetails: document.getElementById("dueDetails"),
+  emotionGrid: document.getElementById("emotionGrid"),
+  noteBox: document.getElementById("noteBox"),
+  saveBtn: document.getElementById("saveBtn"),
+  saveOffSlotBtn: document.getElementById("saveOffSlotBtn"),
+  saveHint: document.getElementById("saveHint"),
+  todayList: document.getElementById("todayList"),
+
+  // calendar
+  pickDate: document.getElementById("pickDate"),
+  jumpToday: document.getElementById("jumpToday"),
+  deleteDay: document.getElementById("deleteDay"),
+  dayList: document.getElementById("dayList"),
+  slotList: document.getElementById("slotList"),
+
+  // insights
+  chart: document.getElementById("chart"),
+  refreshInsights: document.getElementById("refreshInsights"),
+  insightNote: document.getElementById("insightNote"),
+  exportJson: document.getElementById("exportJson"),
+  exportCsv: document.getElementById("exportCsv"),
+
+  // settings
+  sleepStart: document.getElementById("sleepStart"),
+  sleepEnd: document.getElementById("sleepEnd"),
+  intervalHours: document.getElementById("intervalHours"),
+  enableNotifs: document.getElementById("enableNotifs"),
+  notifState: document.getElementById("notifState"),
+  saveSettings: document.getElementById("saveSettings"),
+  settingsHint: document.getElementById("settingsHint"),
+  wipeAll: document.getElementById("wipeAll"),
+
+  // toast
+  toast: document.getElementById("toast"),
+  toastTitle: document.getElementById("toastTitle"),
+  toastMsg: document.getElementById("toastMsg"),
+};
+
+function showToast(title, msg){
+  els.toastTitle.textContent = title;
+  els.toastMsg.textContent = msg;
+  els.toast.classList.add("show");
+  setTimeout(()=>els.toast.classList.remove("show"), 2200);
+}
+
+// ------- Render emotions -------
+function renderEmotionButtons(){
+  els.emotionGrid.innerHTML = "";
+  for (const e of EMOTIONS){
+    const btn = document.createElement("button");
+    btn.className = "emo";
+    btn.type = "button";
+    btn.dataset.key = e.key;
+    btn.innerHTML = `
+      <div class="swatch" style="background:${e.color};"></div>
+      <div class="name">${e.emoji} ${e.label}</div>
+      <div class="desc">${e.desc}</div>
+    `;
+    btn.addEventListener("click", ()=>{
+      selectedEmotionKey = e.key;
+      document.querySelectorAll(".emo").forEach(x=>x.classList.toggle("selected", x.dataset.key===e.key));
+      els.saveHint.textContent = `Selected: ${e.label}`;
+    });
+    els.emotionGrid.appendChild(btn);
+  }
+}
+
+// ------- Entry rendering -------
+function emotionByKey(key){
+  return EMOTIONS.find(e=>e.key===key) ?? EMOTIONS.find(e=>e.key==="neutral");
+}
+
+function entryCard(entry, withDelete=false){
+  const emo = emotionByKey(entry.emotionKey);
+  const d = new Date(entry.ts);
+  const div = document.createElement("div");
+  div.className = "entry";
+  div.innerHTML = `
+    <div class="entryTop">
+      <div class="tag">
+        <i style="background:${emo.color}"></i>
+        ${emo.emoji} ${emo.label}
+      </div>
+      <div class="entryTime">
+        ${formatPrettyDateTime(d)}
+        <div class="small mono">slot: ${entry.slotLabel ?? "—"}</div>
+      </div>
+    </div>
+    <div class="entryNote">${entry.note ? escapeHtml(entry.note) : "<span class='small'>(no notes)</span>"}</div>
+    ${withDelete ? `<div class="row" style="margin-top:10px;"><button class="btn danger" data-del="${entry.id}">Delete</button></div>` : ""}
+  `;
+
+  if (withDelete){
+    div.querySelector(`[data-del="${entry.id}"]`).addEventListener("click", async ()=>{
+      await DataStore.deleteById(entry.id);
+      showToast("Deleted", "That entry is gone.");
+      await refreshDayView();
+      await refreshTodayList();
+      await refreshInsights();
+    });
+  }
+  return div;
+}
+
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+// ------- Main refreshers -------
+async function refreshClockAndDue(){
+  const now = new Date();
+  els.nowTime.textContent = now.toLocaleTimeString(undefined, { hour:"2-digit", minute:"2-digit" });
+  els.nowDate.textContent = formatPrettyDate(now);
+
+  const settings = getSettings();
+  const info = getDueInfo(now, settings);
+
+  const dateMid = new Date(now); dateMid.setHours(0,0,0,0);
+  const slots = generateSlotsForDate(dateMid, settings);
+
+  if (info.state === "asleep"){
+    els.dueTitle.textContent = "You’re in sleep time 🌙";
+    els.dueDetails.textContent = info.nextSlot
+      ? `Next check-in: ${formatPrettyDateTime(info.nextSlot)}`
+      : "No slots found. Check your sleep settings.";
+    els.saveHint.textContent = "You can still save anyway if you want.";
+    els.saveBtn.disabled = false;
+    return;
+  }
+
+  // awake
+  if (!slots.length){
+    els.dueTitle.textContent = "No slots found 😅";
+    els.dueDetails.textContent = "Try adjusting sleep start/end in Settings.";
+    return;
+  }
+
+  const next = info.nextSlot ? formatPrettyDateTime(info.nextSlot) : "—";
+  if (!info.dueSlot){
+    els.dueTitle.textContent = "First check-in of the day is coming ✨";
+    els.dueDetails.textContent = `Next check-in: ${next}`;
+    els.saveHint.textContent = "You can save now (it will count as an extra entry).";
+    return;
+  }
+
+  // due slot exists
+  const due = info.dueSlot;
+  const dueLabel = `${pad2(due.getHours())}:${pad2(due.getMinutes())}`;
+  els.dueTitle.textContent = `Current slot: ${dueLabel}`;
+  els.dueDetails.textContent = `Next check-in: ${next}`;
+  els.saveHint.textContent = "Save to log how you feel in this 4-hour window.";
+}
+
+async function refreshTodayList(){
+  const now = new Date();
+  const todayKey = dateKeyFromDate(now);
+  const entries = await DataStore.getByDate(todayKey);
+
+  els.todayList.innerHTML = "";
+  if (!entries.length){
+    const div = document.createElement("div");
+    div.className = "small";
+    div.textContent = "No entries yet today. Your first check-in is waiting 🙂";
+    els.todayList.appendChild(div);
+    return;
+  }
+
+  // newest first for this panel
+  for (const e of entries.slice().reverse()){
+    els.todayList.appendChild(entryCard(e, false));
+  }
+}
+
+async function refreshDayView(){
+  const dateStr = els.pickDate.value;
+  if (!dateStr) return;
+
+  const [y,m,d] = dateStr.split("-").map(Number);
+  const dateMid = new Date(y, m-1, d, 0,0,0,0);
+  const dateKey = dateKeyFromDate(dateMid);
+
+  const settings = getSettings();
+  const slots = generateSlotsForDate(dateMid, settings);
+  const entries = await DataStore.getByDate(dateKey);
+
+  // entries list
+  els.dayList.innerHTML = "";
+  if (!entries.length){
+    const div = document.createElement("div");
+    div.className = "small";
+    div.textContent = "No entries on this date.";
+    els.dayList.appendChild(div);
+  } else {
+    for (const e of entries.slice().reverse()){
+      els.dayList.appendChild(entryCard(e, true));
+    }
+  }
+
+  // slots list
+  els.slotList.innerHTML = "";
+  if (!slots.length){
+    const div = document.createElement("div");
+    div.className = "small";
+    div.textContent = "No slots found. Check your sleep schedule in Settings.";
+    els.slotList.appendChild(div);
+  } else {
+    for (const s of slots){
+      const card = document.createElement("div");
+      card.className = "entry";
+      card.innerHTML = `
+        <div class="entryTop">
+          <div class="tag"><i style="background:#7c5cff"></i> Slot</div>
+          <div class="entryTime">${formatPrettyDateTime(s)}</div>
+        </div>
+        <div class="small">This is a scheduled check-in time (awake only).</div>
+      `;
+      els.slotList.appendChild(card);
+    }
+  }
+}
+
+// ------- Save entry -------
+function buildEntry({forceOffSlot=false}){
+  const now = new Date();
+  const settings = getSettings();
+  const info = getDueInfo(now, settings);
+
+  const emotionKey = selectedEmotionKey ?? "neutral";
+  const note = els.noteBox.value.trim();
+
+  // slot label:
+  // - If we are awake and have a due slot, we label with that slot time.
+  // - Otherwise we label "off-slot".
+  let slotLabel = "off-slot";
+  if (!forceOffSlot && info.state === "awake" && info.dueSlot){
+    slotLabel = `${pad2(info.dueSlot.getHours())}:${pad2(info.dueSlot.getMinutes())}`;
+  }
+
+  return {
+    id: crypto.randomUUID(),
+    ts: now.getTime(),
+    dateKey: dateKeyFromDate(now),
+    tzOffsetMin: now.getTimezoneOffset(),  // helps future cloud sync if needed
+    emotionKey,
+    note,
+    slotLabel
+  };
+}
+
+async function saveEntry(forceOffSlot=false){
+  const entry = buildEntry({forceOffSlot});
+  await DataStore.put(entry);
+  els.noteBox.value = "";
+  selectedEmotionKey = null;
+  document.querySelectorAll(".emo").forEach(x=>x.classList.remove("selected"));
+  els.saveHint.textContent = "Saved. Pick an emotion for the next one.";
+
+  const emo = emotionByKey(entry.emotionKey);
+  showToast("Saved!", `${emo.emoji} ${emo.label} at ${new Date(entry.ts).toLocaleTimeString(undefined, {hour:"2-digit", minute:"2-digit"})}`);
+
+  await refreshTodayList();
+  await refreshDayView();
+  await refreshInsights();
+}
+
+// ------- Insights chart (simple weekly bar of average score per day) -------
+function drawChart(canvas, points, labels){
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(rect.width * dpr);
+  canvas.height = Math.floor(rect.height * dpr);
+  ctx.scale(dpr, dpr);
+
+  // clear
+  ctx.clearRect(0,0,rect.width,rect.height);
+
+  // frame
+  const pad = 18;
+  const w = rect.width, h = rect.height;
+  const innerW = w - pad*2;
+  const innerH = h - pad*2;
+
+  // baseline & range
+  const minY = -2.2;
+  const maxY =  2.2;
+
+  // axes
+  ctx.globalAlpha = 0.8;
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(17,24,39,.15)";
+  ctx.beginPath();
+  ctx.moveTo(pad, pad);
+  ctx.lineTo(pad, h-pad);
+  ctx.lineTo(w-pad, h-pad);
+  ctx.stroke();
+
+  // grid lines (0 line)
+  const y0 = pad + innerH * (maxY / (maxY - minY));
+  ctx.strokeStyle = "rgba(17,24,39,.10)";
+  ctx.beginPath();
+  ctx.moveTo(pad, y0);
+  ctx.lineTo(w-pad, y0);
+  ctx.stroke();
+
+  // bars
+  const n = points.length;
+  const gap = 10;
+  const barW = (innerW - gap*(n-1)) / n;
+  for (let i=0; i<n; i++){
+    const val = points[i];
+    const x = pad + i*(barW + gap);
+
+    const yVal = pad + innerH * ((maxY - val) / (maxY - minY));
+    const yBase = y0;
+    const top = Math.min(yVal, yBase);
+    const height = Math.abs(yBase - yVal);
+
+    // color: map val -> emotion vibe
+    // (bright if positive, darker if negative)
+    let color = "rgba(184,192,204,.9)"; // neutral
+    if (val >= 1) color = "rgba(255,209,102,.92)";      // happy-ish
+    else if (val > 0) color = "rgba(125,255,178,.88)";  // calm-ish
+    else if (val <= -1.5) color = "rgba(59,63,92,.92)"; // sad-ish
+    else if (val < 0) color = "rgba(139,143,168,.9)";   // tired/anxious-ish
+
+    ctx.fillStyle = color;
+    roundRect(ctx, x, top, barW, Math.max(2, height), 10, true, false);
+
+    // label
+    ctx.fillStyle = "rgba(17,24,39,.72)";
+    ctx.font = "11px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    ctx.textAlign = "center";
+    ctx.fillText(labels[i], x + barW/2, h - 6);
+  }
+
+  // title
+  ctx.fillStyle = "rgba(17,24,39,.85)";
+  ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+  ctx.textAlign = "left";
+  ctx.fillText("Average mood score per day (last 7 days)", pad, 14);
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke){
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+  if (fill) ctx.fill();
+  if (stroke) ctx.stroke();
+}
+
+async function refreshInsights(){
+  const now = new Date();
+  const end = new Date(now); end.setHours(23,59,59,999);
+  const start = new Date(now); start.setDate(start.getDate()-6); start.setHours(0,0,0,0);
+
+  const entries = await DataStore.getRangeByTs(start.getTime(), end.getTime());
+
+  const byDay = new Map(); // dateKey -> {sum,count}
+  for (let i=0; i<7; i++){
+    const d = new Date(start); d.setDate(start.getDate()+i);
+    byDay.set(dateKeyFromDate(d), { sum:0, count:0, date: d });
+  }
+
+  for (const e of entries){
+    const emo = emotionByKey(e.emotionKey);
+    const bucket = byDay.get(e.dateKey);
+    if (bucket){
+      bucket.sum += emo.score;
+      bucket.count += 1;
+    }
+  }
+
+  const points = [];
+  const labels = [];
+  for (const [k, v] of byDay.entries()){
+    points.push(v.count ? (v.sum / v.count) : 0);
+    labels.push(v.date.toLocaleDateString(undefined, { weekday:"short" }));
+  }
+
+  drawChart(els.chart, points, labels);
+
+  const total = entries.length;
+  els.insightNote.textContent = total
+    ? `Using ${total} check-ins from ${formatPrettyDate(start)} to ${formatPrettyDate(end)}.`
+    : "No check-ins in the last 7 days yet. Save a few to see trends.";
+}
+
+// ------- Export -------
+function downloadFile(filename, content, mime){
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function exportJSON(){
+  const all = await DataStore.getAll();
+  downloadFile(`mood-checkin-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(all, null, 2), "application/json");
+  showToast("Exported", "JSON file downloaded.");
+}
+
+async function exportCSV(){
+  const all = await DataStore.getAll();
+  const header = ["id","ts","localDateTime","dateKey","emotionKey","slotLabel","note","tzOffsetMin"];
+  const rows = [header.join(",")];
+  for (const e of all){
+    const d = new Date(e.ts);
+    const localDateTime = d.toLocaleString();
+    const row = [
+      e.id,
+      e.ts,
+      csvEscape(localDateTime),
+      e.dateKey,
+      e.emotionKey,
+      e.slotLabel ?? "",
+      csvEscape(e.note ?? ""),
+      e.tzOffsetMin
+    ];
+    rows.push(row.join(","));
+  }
+  downloadFile(`mood-checkin-${new Date().toISOString().slice(0,10)}.csv`, rows.join("\n"), "text/csv");
+  showToast("Exported", "CSV file downloaded.");
+}
+
+function csvEscape(s){
+  const str = String(s);
+  if (/[,"\n]/.test(str)) return `"${str.replaceAll('"','""')}"`;
+  return str;
+}
+
+// ------- Tabs -------
+function setView(view){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.view===view));
+  document.getElementById("view-checkin").style.display = (view==="checkin") ? "" : "none";
+  document.getElementById("view-calendar").style.display = (view==="calendar") ? "" : "none";
+  document.getElementById("view-insights").style.display = (view==="insights") ? "" : "none";
+  document.getElementById("view-settings").style.display = (view==="settings") ? "" : "none";
+}
+
+// ------- Notifications (optional, only works when site is open or via service worker if you add later) -------
+async function enableNotifications(){
+  if (!("Notification" in window)){
+    els.notifState.textContent = "Not supported in this browser";
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  els.notifState.textContent = perm === "granted" ? "Enabled" : "Not enabled";
+  if (perm === "granted"){
+    showToast("Notifications enabled", "Tip: for true background reminders, add a service worker later.");
+  }
+}
+
+// ------- Settings UI -------
+function loadSettingsUI(){
+  const s = getSettings();
+  els.sleepStart.value = s.sleepStart;
+  els.sleepEnd.value = s.sleepEnd;
+  els.intervalHours.value = s.intervalHours;
+
+  if ("Notification" in window){
+    els.notifState.textContent = Notification.permission === "granted" ? "Enabled" : "Not enabled";
+  } else {
+    els.notifState.textContent = "Not supported";
+  }
+}
+
+async function applySettingsFromUI(){
+  const s = {
+    sleepStart: els.sleepStart.value || DEFAULT_SETTINGS.sleepStart,
+    sleepEnd: els.sleepEnd.value || DEFAULT_SETTINGS.sleepEnd,
+    intervalHours: clamp(Number(els.intervalHours.value || DEFAULT_SETTINGS.intervalHours), 1, 12),
+  };
+  saveSettings(s);
+  els.settingsHint.textContent = `Saved. Awake slots will use sleep ${s.sleepStart} → ${s.sleepEnd}.`;
+  showToast("Saved", "Your schedule settings were updated.");
+
+  await refreshClockAndDue();
+  await refreshTodayList();
+  await refreshDayView();
+  await refreshInsights();
+}
+
+// ------- Calendar date default -------
+function setCalendarToToday(){
+  const now = new Date();
+  els.pickDate.value = dateKeyFromDate(now);
+}
+
+// ------- Wire up events -------
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.addEventListener("click", async ()=>{
+    const v = btn.dataset.view;
+    setView(v);
+    if (v==="calendar") await refreshDayView();
+    if (v==="insights") await refreshInsights();
+    if (v==="settings") loadSettingsUI();
+  });
+});
+
+els.saveBtn.addEventListener("click", async ()=>{
+  // Save using the current scheduled slot label when possible
+  await saveEntry(false);
+});
+els.saveOffSlotBtn.addEventListener("click", async ()=>{
+  await saveEntry(true);
+});
+
+els.jumpToday.addEventListener("click", async ()=>{
+  setCalendarToToday();
+  await refreshDayView();
+});
+
+els.pickDate.addEventListener("change", async ()=>{
+  await refreshDayView();
+});
+
+els.deleteDay.addEventListener("click", async ()=>{
+  const dateStr = els.pickDate.value;
+  if (!dateStr) return;
+  const deletedCount = await DataStore.deleteByDate(dateStr);
+  showToast("Deleted", `Removed ${deletedCount} entr${deletedCount===1?"y":"ies"} on ${dateStr}.`);
+  await refreshDayView();
+  await refreshTodayList();
+  await refreshInsights();
+});
+
+els.refreshInsights.addEventListener("click", refreshInsights);
+els.exportJson.addEventListener("click", exportJSON);
+els.exportCsv.addEventListener("click", exportCSV);
+
+els.enableNotifs.addEventListener("click", enableNotifications);
+els.saveSettings.addEventListener("click", applySettingsFromUI);
+
+els.wipeAll.addEventListener("click", async ()=>{
+  const ok = confirm("Wipe all data in this browser? This cannot be undone.");
+  if (!ok) return;
+  await DataStore.wipeAll();
+  showToast("Wiped", "All entries were removed from this browser.");
+  await refreshTodayList();
+  await refreshDayView();
+  await refreshInsights();
+});
+
+// ------- Init -------
+(async function init(){
+  renderEmotionButtons();
+  loadSettingsUI();
+  setCalendarToToday();
+
+  await DataStore.open();
+  await refreshClockAndDue();
+  await refreshTodayList();
+  await refreshDayView();
+  await refreshInsights();
+
+  // update clock + due info every 30 seconds
+  setInterval(refreshClockAndDue, 30000);
+
+  // Optional: gentle notification when check-in becomes due (only while page open)
+  setInterval(async ()=>{
+    const settings = getSettings();
+    const now = new Date();
+    const info = getDueInfo(now, settings);
+
+    if ("Notification" in window && Notification.permission === "granted"){
+      // Notify within first 2 minutes after a slot time
+      if (info.state==="awake" && info.dueSlot){
+        const diff = now.getTime() - info.dueSlot.getTime();
+        if (diff >= 0 && diff < 2*60*1000){
+          new Notification("Mood Check-In", { body: "How do you feel right now? Tap to log it." });
+        }
+      }
+    }
+  }, 60000);
+})();
+</script>
+</body>
+</html>
