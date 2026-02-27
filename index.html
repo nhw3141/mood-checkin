@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mood Check-In</title>
-  <meta name="description" content="A cute pastel 4-hour mood tracker with notes, sleep schedule, and 1-year browser storage." />
+  <meta name="description" content="Cute mood tracker " />
 
   <style>
     :root{
@@ -14,8 +14,6 @@
       --bg-c: #f6f3ff;
 
       --card: rgba(255,255,255,.78);
-      --card-strong: rgba(255,255,255,.90);
-
       --ink: #2c2433;
       --muted: rgba(44,36,51,.68);
 
@@ -30,13 +28,12 @@
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
 
-      /* Accent */
+      /* Accents */
       --accent: #a78bfa;
       --accent-2: #fb7185;
       --accent-3: #67e8f9;
       --good: #86efac;
       --warn: #fde68a;
-      --bad: #fca5a5;
 
       /* Emotion palette (pastel) */
       --emo-happy:   #ffe08a;
@@ -71,7 +68,6 @@
       gap: 14px;
     }
 
-    /* Top bar */
     header{
       display:flex;
       align-items:center;
@@ -148,7 +144,6 @@
       font-size: 13px;
     }
 
-    /* Tabs */
     nav{
       display:flex;
       gap: 8px;
@@ -161,10 +156,10 @@
       padding: 10px 13px;
       border-radius: var(--radius-pill);
       cursor:pointer;
-      font-weight: 800;
+      font-weight: 900;
       font-size: 13px;
       box-shadow: 0 14px 26px rgba(44,36,51,.08);
-      transition: transform .08s ease, box-shadow .18s ease, outline .18s ease;
+      transition: transform .08s ease, outline .18s ease;
     }
     .tab:hover{ transform: translateY(-1px); }
     .tab:active{ transform: translateY(0px); }
@@ -174,7 +169,6 @@
       background: linear-gradient(135deg, rgba(167,139,250,.18), rgba(251,113,133,.14), rgba(103,232,249,.14));
     }
 
-    /* Layout */
     .grid{
       display:grid;
       grid-template-columns: 1.35fr .65fr;
@@ -186,7 +180,6 @@
       .nowbox{justify-content:flex-start}
     }
 
-    /* Cards */
     .card{
       background: var(--card);
       border: var(--border);
@@ -222,37 +215,11 @@
       line-height:1.35;
     }
 
-    /* Due bubble */
-    .due{
-      display:flex;
-      gap: 10px;
-      align-items:flex-start;
-      padding: 12px;
-      border-radius: var(--radius-lg);
-      border: 1px dashed rgba(44,36,51,.18);
-      background: rgba(255,255,255,.70);
-    }
-    .dot{
-      width: 10px; height:10px; border-radius:999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 7px rgba(167,139,250,.16);
-      margin-top: 4px;
-      flex: 0 0 auto;
-      animation: pulse 2.1s ease-in-out infinite;
-    }
-    @keyframes pulse{
-      0%,100%{ transform: scale(1); }
-      50%{ transform: scale(1.08); }
-    }
-    .small{ font-size: 12px; color: var(--muted); }
-    .mono{ font-family: var(--mono); }
-
-    /* Emotions */
     .emotions{
       display:grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 10px;
     }
     @media (max-width: 560px){
       .emotions{grid-template-columns: repeat(2, minmax(0, 1fr))}
@@ -276,7 +243,7 @@
     }
     .emo:hover{ transform: translateY(-1px); }
     .emo:active{ transform: translateY(0px); }
-    .emo .name{ font-weight: 900; font-size: 13.5px; }
+    .emo .name{ font-weight: 950; font-size: 13.5px; }
     .emo .desc{ font-size: 11.5px; color: var(--muted); }
     .emo .swatch{
       position:absolute;
@@ -284,7 +251,6 @@
       width: 86px; height: 86px;
       border-radius: 999px;
       opacity: .30;
-      filter: blur(0px);
     }
     .emo.selected{
       outline: 3px solid rgba(44,36,51,.12);
@@ -292,7 +258,6 @@
       box-shadow: 0 18px 38px rgba(44,36,51,.10);
     }
 
-    /* Notes */
     textarea{
       width:100%;
       border-radius: var(--radius-lg);
@@ -312,7 +277,6 @@
       background: rgba(255,255,255,.95);
     }
 
-    /* Buttons */
     .row{
       display:flex;
       gap: 10px;
@@ -326,9 +290,9 @@
       cursor:pointer;
       background: rgba(255,255,255,.82);
       box-shadow: 0 14px 26px rgba(44,36,51,.08);
-      font-weight: 900;
+      font-weight: 950;
       font-size: 13px;
-      transition: transform .08s ease, box-shadow .18s ease, filter .18s ease;
+      transition: transform .08s ease, filter .18s ease;
       user-select:none;
     }
     .btn:hover{ transform: translateY(-1px); filter: brightness(1.01); }
@@ -340,18 +304,10 @@
         radial-gradient(circle at 20% 20%, rgba(255,255,255,.25), transparent 35%),
         linear-gradient(135deg, rgba(167,139,250,.95), rgba(251,113,133,.92));
     }
-    .btn.ghost{
-      background: rgba(255,255,255,.65);
-    }
     .btn.danger{
       color:#fff;
       border: 1px solid rgba(44,36,51,.10);
       background: linear-gradient(135deg, rgba(251,113,133,.92), rgba(252,165,165,.86));
-    }
-    .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-      transform:none;
     }
 
     .divider{
@@ -360,7 +316,6 @@
       margin: 12px 0;
     }
 
-    /* Lists */
     .list{
       display:flex;
       flex-direction:column;
@@ -409,7 +364,6 @@
       white-space:pre-wrap;
     }
 
-    /* Forms */
     .formGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -424,9 +378,9 @@
       gap: 6px;
       font-size: 12.5px;
       color: var(--muted);
-      font-weight: 850;
+      font-weight: 900;
     }
-    input[type="time"], input[type="number"], input[type="date"]{
+    input[type="time"], input[type="date"], input[type="number"]{
       border: var(--border);
       border-radius: var(--radius-md);
       padding: 10px 10px;
@@ -442,7 +396,6 @@
       background: rgba(255,255,255,.95);
     }
 
-    /* Insights */
     canvas{
       width:100%;
       height:260px;
@@ -452,7 +405,6 @@
       box-shadow: 0 14px 26px rgba(44,36,51,.08);
     }
 
-    /* Toast */
     .toast{
       position: fixed;
       left: 18px;
@@ -480,25 +432,6 @@
     }
     .toast .tText{ font-size: 13px; line-height:1.25; }
     .toast .tText b{ display:block; }
-
-    /* Cute header extra line */
-    .tiny-badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      padding: 7px 11px;
-      border-radius: var(--radius-pill);
-      background: rgba(255,255,255,.72);
-      border: var(--border);
-      box-shadow: 0 14px 26px rgba(44,36,51,.08);
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .spark{
-      width:10px;height:10px;border-radius:999px;
-      background: var(--warn);
-      box-shadow: 0 0 0 7px rgba(253,230,138,.16);
-    }
   </style>
 </head>
 
@@ -509,12 +442,11 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Mood Check-In</h1>
-          <div class="sub">Cute pastel 4-hour tracking (awake time only) with notes 💗</div>
+          <div class="sub">Pastel mood tracker with notes</div>
         </div>
       </div>
 
       <div class="nowbox">
-        <div class="tiny-badge"><span class="spark" aria-hidden="true"></span> gentle + honest mood tracking</div>
         <div class="pill"><span>Local time:</span> <b id="nowTime">—</b></div>
         <div class="pill"><span>Today:</span> <b id="nowDate">—</b></div>
       </div>
@@ -530,34 +462,25 @@
     <!-- CHECK-IN VIEW -->
     <section class="grid" id="view-checkin">
       <div class="card">
-        <h2>How do you feel right now?</h2>
-        <div class="hint">Pick an emotion (Neutral is always okay), add a note if you want, then save.</div>
-
-        <div class="due">
-          <div class="dot" aria-hidden="true"></div>
-          <div>
-            <b id="dueTitle">Loading your schedule…</b>
-            <div class="small" id="dueDetails"></div>
-          </div>
-        </div>
+        <h2>Check-In</h2>
+        <div class="hint">Choose an emotion and add notes if you want.</div>
 
         <div class="emotions" id="emotionGrid"></div>
 
         <div class="divider"></div>
 
         <label for="noteBox">Notes (optional)</label>
-        <textarea id="noteBox" placeholder="What happened? What changed your mood? Anything you want to remember later…"></textarea>
+        <textarea id="noteBox" placeholder="What happened…"></textarea>
 
         <div class="row" style="margin-top:10px;">
-          <button class="btn primary" id="saveBtn">Save check-in</button>
-          <button class="btn ghost" id="saveOffSlotBtn" title="Saves an entry for the current moment even if it isn't a scheduled slot.">Save anyway</button>
+          <button class="btn primary" id="saveBtn">Save</button>
           <span class="small" id="saveHint"></span>
         </div>
       </div>
 
       <div class="card">
-        <h2>Today so far</h2>
-        <div class="hint">Your check-ins for today (real timestamps).</div>
+        <h2>Today</h2>
+        <div class="hint">Entries saved today.</div>
         <div class="list" id="todayList"></div>
       </div>
     </section>
@@ -566,7 +489,7 @@
     <section class="grid" id="view-calendar" style="display:none;">
       <div class="card">
         <h2>Calendar</h2>
-        <div class="hint">Pick a date to review your feelings and notes.</div>
+        <div class="hint">Pick a date to review your entries.</div>
 
         <div class="formGrid">
           <label>
@@ -587,9 +510,9 @@
       </div>
 
       <div class="card">
-        <h2>Scheduled slots (awake only)</h2>
-        <div class="hint">Slots are every 4 hours during awake time, based on your sleep schedule.</div>
-        <div class="list" id="slotList"></div>
+        <h2>Summary</h2>
+        <div class="hint">A quick look at that date.</div>
+        <div class="list" id="summaryBox"></div>
       </div>
     </section>
 
@@ -597,7 +520,7 @@
     <section class="grid" id="view-insights" style="display:none;">
       <div class="card">
         <h2>Insights</h2>
-        <div class="hint">A simple weekly snapshot. Bright bars mean lighter days, deeper tones mean heavier days.</div>
+        <div class="hint">Weekly average mood score.</div>
         <canvas id="chart"></canvas>
         <div class="divider"></div>
         <div class="row">
@@ -607,15 +530,15 @@
       </div>
 
       <div class="card">
-        <h2>Export & backup</h2>
-        <div class="hint">Export anytime for safety. Exporting does not delete anything.</div>
+        <h2>Export</h2>
+        <div class="hint">Download your data for backup.</div>
         <div class="row">
           <button class="btn" id="exportJson">Export JSON</button>
           <button class="btn" id="exportCsv">Export CSV</button>
         </div>
         <div class="divider"></div>
         <div class="small">
-          Storage: <b>IndexedDB</b> in this browser. It can hold a year (or more) of entries.
+          Storage: <b>IndexedDB</b> in this browser.
           For multi-device sync later, you can upgrade to Firebase or Supabase.
         </div>
       </div>
@@ -624,21 +547,17 @@
     <!-- SETTINGS VIEW -->
     <section class="grid" id="view-settings" style="display:none;">
       <div class="card">
-        <h2>Schedule settings</h2>
-        <div class="hint">Set your sleep time. Check-ins happen every 4 hours during your awake time only.</div>
+        <h2>Settings</h2>
+        <div class="hint">Sleep times are optional and do not affect check-ins.</div>
 
         <div class="formGrid">
           <label>
-            Sleep starts (bedtime)
+            Sleep starts
             <input type="time" id="sleepStart" />
           </label>
           <label>
-            Sleep ends (wake time)
+            Sleep ends
             <input type="time" id="sleepEnd" />
-          </label>
-          <label>
-            Check-in interval (hours)
-            <input type="number" id="intervalHours" min="1" max="12" step="1" />
           </label>
           <label>
             Notifications (optional)
@@ -646,6 +565,10 @@
               <button class="btn" id="enableNotifs">Enable</button>
               <span class="small" id="notifState">Not enabled</span>
             </div>
+          </label>
+          <label>
+            Data retention
+            <input type="number" id="retentionDays" min="30" max="3650" step="1" />
           </label>
         </div>
 
@@ -658,24 +581,15 @@
         <div class="divider"></div>
         <h2 style="margin-top:0;">Cloud sync upgrade path</h2>
         <div class="small">
-          This app stores entries in IndexedDB by default. To upgrade to cloud sync later:
-          <ol style="margin:8px 0 0 18px; padding:0; color: var(--muted); line-height:1.35;">
-            <li>Add login (email/password or Google).</li>
-            <li>Replace the <span class="mono">DataStore</span> functions with Firebase/Supabase calls.</li>
-            <li>Keep the same entry format (timestamp, emotionKey, note, slotLabel).</li>
-          </ol>
+          To sync across devices later: add login, then replace the <span class="mono">DataStore</span> functions with Firebase/Supabase.
         </div>
       </div>
 
       <div class="card">
         <h2>Data management</h2>
-        <div class="hint">Be careful. Deleting clears data in this browser only.</div>
+        <div class="hint">Deleting clears data in this browser only.</div>
         <div class="row">
           <button class="btn danger" id="wipeAll">Wipe all data</button>
-        </div>
-        <div class="divider"></div>
-        <div class="small">
-          Tip: Export JSON monthly for extra safety, or upgrade to cloud sync for multi-device support.
         </div>
       </div>
     </section>
@@ -684,37 +598,37 @@
   <div class="toast" id="toast">
     <div class="tDot" aria-hidden="true"></div>
     <div class="tText">
-      <b id="toastTitle">Saved!</b>
-      <span id="toastMsg">Your check-in was stored.</span>
+      <b id="toastTitle">Saved</b>
+      <span id="toastMsg">Entry stored.</span>
     </div>
   </div>
 
 <script>
 /* =========================
-   Pastel Mood Check-In (SPA)
-   IndexedDB storage + sleep-based scheduling
+   Pastel Mood Check-In (Anytime)
+   IndexedDB storage
    ========================= */
-
-const EMOTIONS = [
-  { key:"happy",   label:"Happy",   emoji:"😊", color:getCss("--emo-happy"),   desc:"bright & warm", score:+2 },
-  { key:"calm",    label:"Calm",    emoji:"😌", color:getCss("--emo-calm"),    desc:"soft & steady", score:+1 },
-  { key:"neutral", label:"Neutral", emoji:"😐", color:getCss("--emo-neutral"), desc:"nothing special", score: 0 },
-  { key:"tired",   label:"Tired",   emoji:"😴", color:getCss("--emo-tired"),   desc:"low energy", score:-1 },
-  { key:"anxious", label:"Anxious", emoji:"😰", color:getCss("--emo-anxious"), desc:"uneasy thoughts", score:-1 },
-  { key:"sad",     label:"Sad",     emoji:"😟", color:getCss("--emo-sad"),     desc:"heavy feelings", score:-2 },
-  { key:"angry",   label:"Angry",   emoji:"😠", color:getCss("--emo-angry"),   desc:"frustrated", score:-2 },
-];
 
 function getCss(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
+const EMOTIONS = [
+  { key:"happy",   label:"Happy",   emoji:"😊", color:getCss("--emo-happy"),   desc:"bright & warm", score:+2 },
+  { key:"calm",    label:"Calm",    emoji:"😌", color:getCss("--emo-calm"),    desc:"soft & steady", score:+1 },
+  { key:"neutral", label:"Neutral", emoji:"😐", color:getCss("--emo-neutral"), desc:"neutral", score: 0 },
+  { key:"tired",   label:"Tired",   emoji:"😴", color:getCss("--emo-tired"),   desc:"low energy", score:-1 },
+  { key:"anxious", label:"Anxious", emoji:"😰", color:getCss("--emo-anxious"), desc:"uneasy", score:-1 },
+  { key:"sad",     label:"Sad",     emoji:"😟", color:getCss("--emo-sad"),     desc:"heavy", score:-2 },
+  { key:"angry",   label:"Angry",   emoji:"😠", color:getCss("--emo-angry"),   desc:"frustrated", score:-2 },
+];
+
 const DEFAULT_SETTINGS = {
   sleepStart: "23:00",
   sleepEnd:   "07:00",
-  intervalHours: 4
+  retentionDays: 365
 };
-const SETTINGS_KEY = "moodcheck.settings.v2";
+const SETTINGS_KEY = "moodcheck.settings.v3";
 
 const DB_NAME = "moodcheck_db";
 const DB_VERSION = 1;
@@ -815,6 +729,7 @@ const DataStore = {
   }
 };
 
+/* Helpers */
 function pad2(n){ return String(n).padStart(2,"0"); }
 function dateKeyFromDate(d){
   return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
@@ -825,16 +740,15 @@ function formatPrettyDate(d){
 function formatPrettyDateTime(d){
   return d.toLocaleString(undefined, { weekday:"short", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
 }
-function parseTimeToMinutes(hhmm){
-  const [h,m] = hhmm.split(":").map(Number);
-  return h*60 + m;
-}
-function minutesToDate(baseDate, minutes){
-  const d = new Date(baseDate);
-  d.setMinutes(minutes, 0, 0);
-  return d;
-}
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
 function getSettings(){
   try{
@@ -844,7 +758,7 @@ function getSettings(){
     return {
       sleepStart: p.sleepStart ?? DEFAULT_SETTINGS.sleepStart,
       sleepEnd: p.sleepEnd ?? DEFAULT_SETTINGS.sleepEnd,
-      intervalHours: clamp(Number(p.intervalHours ?? DEFAULT_SETTINGS.intervalHours), 1, 12)
+      retentionDays: clamp(Number(p.retentionDays ?? DEFAULT_SETTINGS.retentionDays), 30, 3650),
     };
   }catch{
     return { ...DEFAULT_SETTINGS };
@@ -854,82 +768,20 @@ function saveSettings(s){
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
 }
 
-function getAwakeIntervalsForDate(dateMidnight, settings){
-  const sStart = parseTimeToMinutes(settings.sleepStart);
-  const sEnd   = parseTimeToMinutes(settings.sleepEnd);
-
-  if (sStart > sEnd){
-    return [{ startMin: sEnd, endMin: sStart }];
-  }
-  return [
-    { startMin: 0, endMin: sStart },
-    { startMin: sEnd, endMin: 24*60 }
-  ].filter(iv => (iv.endMin - iv.startMin) >= 30);
+function emotionByKey(key){
+  return EMOTIONS.find(e=>e.key===key) ?? EMOTIONS.find(e=>e.key==="neutral");
 }
 
-function generateSlotsForDate(dateMidnight, settings){
-  const intervalMin = settings.intervalHours * 60;
-  const intervals = getAwakeIntervalsForDate(dateMidnight, settings);
-  const slots = [];
-  for (const iv of intervals){
-    let t = iv.startMin;
-    while (t < iv.endMin){
-      slots.push(minutesToDate(dateMidnight, t));
-      t += intervalMin;
-    }
-  }
-  return slots.sort((a,b)=>a-b);
-}
-
-function isInAwakeTime(dt, settings){
-  const mins = dt.getHours()*60 + dt.getMinutes();
-  const sStart = parseTimeToMinutes(settings.sleepStart);
-  const sEnd   = parseTimeToMinutes(settings.sleepEnd);
-
-  if (sStart > sEnd){
-    return mins >= sEnd && mins < sStart;
-  }
-  return !(mins >= sStart && mins < sEnd);
-}
-
-function getDueInfo(now, settings){
-  const todayMid = new Date(now); todayMid.setHours(0,0,0,0);
-  const slotsToday = generateSlotsForDate(todayMid, settings);
-  const inAwake = isInAwakeTime(now, settings);
-
-  let prev = null, next = null;
-  for (const s of slotsToday){
-    if (s.getTime() <= now.getTime()) prev = s;
-    if (s.getTime() > now.getTime()){ next = s; break; }
-  }
-
-  if (!inAwake){
-    if (next) return { state:"asleep", dueSlot:null, nextSlot: next };
-    const tomorrowMid = new Date(todayMid); tomorrowMid.setDate(tomorrowMid.getDate()+1);
-    const slotsTomorrow = generateSlotsForDate(tomorrowMid, settings);
-    return { state:"asleep", dueSlot:null, nextSlot: slotsTomorrow[0] ?? null };
-  }
-
-  if (!slotsToday.length){
-    return { state:"awake", dueSlot:null, nextSlot:null };
-  }
-  if (!prev){
-    return { state:"awake", dueSlot:null, nextSlot: slotsToday[0] ?? null };
-  }
-  return { state:"awake", dueSlot: prev, nextSlot: next ?? null };
-}
-
+/* UI */
 let selectedEmotionKey = null;
 
 const els = {
   nowTime: document.getElementById("nowTime"),
   nowDate: document.getElementById("nowDate"),
-  dueTitle: document.getElementById("dueTitle"),
-  dueDetails: document.getElementById("dueDetails"),
+
   emotionGrid: document.getElementById("emotionGrid"),
   noteBox: document.getElementById("noteBox"),
   saveBtn: document.getElementById("saveBtn"),
-  saveOffSlotBtn: document.getElementById("saveOffSlotBtn"),
   saveHint: document.getElementById("saveHint"),
   todayList: document.getElementById("todayList"),
 
@@ -937,7 +789,7 @@ const els = {
   jumpToday: document.getElementById("jumpToday"),
   deleteDay: document.getElementById("deleteDay"),
   dayList: document.getElementById("dayList"),
-  slotList: document.getElementById("slotList"),
+  summaryBox: document.getElementById("summaryBox"),
 
   chart: document.getElementById("chart"),
   refreshInsights: document.getElementById("refreshInsights"),
@@ -947,7 +799,7 @@ const els = {
 
   sleepStart: document.getElementById("sleepStart"),
   sleepEnd: document.getElementById("sleepEnd"),
-  intervalHours: document.getElementById("intervalHours"),
+  retentionDays: document.getElementById("retentionDays"),
   enableNotifs: document.getElementById("enableNotifs"),
   notifState: document.getElementById("notifState"),
   saveSettings: document.getElementById("saveSettings"),
@@ -981,28 +833,16 @@ function renderEmotionButtons(){
     btn.addEventListener("click", ()=>{
       selectedEmotionKey = e.key;
       document.querySelectorAll(".emo").forEach(x=>x.classList.toggle("selected", x.dataset.key===e.key));
-      els.saveHint.textContent = `Selected: ${e.label}`;
+      els.saveHint.textContent = `${e.label} selected`;
     });
     els.emotionGrid.appendChild(btn);
   }
 }
 
-function emotionByKey(key){
-  return EMOTIONS.find(e=>e.key===key) ?? EMOTIONS.find(e=>e.key==="neutral");
-}
-
-function escapeHtml(s){
-  return String(s)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
 function entryCard(entry, withDelete){
   const emo = emotionByKey(entry.emotionKey);
   const d = new Date(entry.ts);
+
   const div = document.createElement("div");
   div.className = "entry";
   div.innerHTML = `
@@ -1013,7 +853,6 @@ function entryCard(entry, withDelete){
       </div>
       <div class="entryTime">
         ${formatPrettyDateTime(d)}
-        <div class="small mono">slot: ${entry.slotLabel ?? "—"}</div>
       </div>
     </div>
     <div class="entryNote">${entry.note ? escapeHtml(entry.note) : "<span class='small'>(no notes)</span>"}</div>
@@ -1023,55 +862,52 @@ function entryCard(entry, withDelete){
   if (withDelete){
     div.querySelector(`[data-del="${entry.id}"]`).addEventListener("click", async ()=>{
       await DataStore.deleteById(entry.id);
-      showToast("Deleted", "That entry is gone.");
+      showToast("Deleted", "Entry removed.");
       await refreshDayView();
       await refreshTodayList();
       await refreshInsights();
     });
   }
+
   return div;
 }
 
-async function refreshClockAndDue(){
+function buildEntry(){
+  const now = new Date();
+  const emotionKey = selectedEmotionKey ?? "neutral";
+  const note = els.noteBox.value.trim();
+
+  return {
+    id: crypto.randomUUID(),
+    ts: now.getTime(),
+    dateKey: dateKeyFromDate(now),
+    tzOffsetMin: now.getTimezoneOffset(),
+    emotionKey,
+    note,
+  };
+}
+
+async function saveEntry(){
+  const entry = buildEntry();
+  await DataStore.put(entry);
+
+  const emo = emotionByKey(entry.emotionKey);
+  showToast("Saved", `${emo.emoji} ${emo.label}`);
+
+  els.noteBox.value = "";
+  selectedEmotionKey = null;
+  document.querySelectorAll(".emo").forEach(x=>x.classList.remove("selected"));
+  els.saveHint.textContent = "";
+
+  await refreshTodayList();
+  await refreshDayView();
+  await refreshInsights();
+}
+
+async function refreshClock(){
   const now = new Date();
   els.nowTime.textContent = now.toLocaleTimeString(undefined, { hour:"2-digit", minute:"2-digit" });
   els.nowDate.textContent = formatPrettyDate(now);
-
-  const settings = getSettings();
-  const info = getDueInfo(now, settings);
-
-  const dateMid = new Date(now); dateMid.setHours(0,0,0,0);
-  const slots = generateSlotsForDate(dateMid, settings);
-
-  if (info.state === "asleep"){
-    els.dueTitle.textContent = "You’re in sleep time 🌙";
-    els.dueDetails.textContent = info.nextSlot
-      ? `Next check-in: ${formatPrettyDateTime(info.nextSlot)}`
-      : "No slots found. Check your sleep settings.";
-    els.saveHint.textContent = "You can still save anyway if you want.";
-    return;
-  }
-
-  if (!slots.length){
-    els.dueTitle.textContent = "No slots found 😅";
-    els.dueDetails.textContent = "Try adjusting sleep start or sleep end in Settings.";
-    return;
-  }
-
-  const next = info.nextSlot ? formatPrettyDateTime(info.nextSlot) : "—";
-
-  if (!info.dueSlot){
-    els.dueTitle.textContent = "First check-in of the day is coming ✨";
-    els.dueDetails.textContent = `Next check-in: ${next}`;
-    els.saveHint.textContent = "You can save now (it will count as an extra entry).";
-    return;
-  }
-
-  const due = info.dueSlot;
-  const dueLabel = `${pad2(due.getHours())}:${pad2(due.getMinutes())}`;
-  els.dueTitle.textContent = `Current slot: ${dueLabel}`;
-  els.dueDetails.textContent = `Next check-in: ${next}`;
-  els.saveHint.textContent = "Save to log how you feel in this window.";
 }
 
 async function refreshTodayList(){
@@ -1083,7 +919,7 @@ async function refreshTodayList(){
   if (!entries.length){
     const div = document.createElement("div");
     div.className = "small";
-    div.textContent = "No entries yet today. Your first check-in is waiting 🙂";
+    div.textContent = "No entries yet.";
     els.todayList.appendChild(div);
     return;
   }
@@ -1096,13 +932,7 @@ async function refreshDayView(){
   const dateStr = els.pickDate.value;
   if (!dateStr) return;
 
-  const [y,m,d] = dateStr.split("-").map(Number);
-  const dateMid = new Date(y, m-1, d, 0,0,0,0);
-  const dateKey = dateKeyFromDate(dateMid);
-
-  const settings = getSettings();
-  const slots = generateSlotsForDate(dateMid, settings);
-  const entries = await DataStore.getByDate(dateKey);
+  const entries = await DataStore.getByDate(dateStr);
 
   els.dayList.innerHTML = "";
   if (!entries.length){
@@ -1116,70 +946,38 @@ async function refreshDayView(){
     }
   }
 
-  els.slotList.innerHTML = "";
-  if (!slots.length){
+  // summary
+  els.summaryBox.innerHTML = "";
+  if (!entries.length){
     const div = document.createElement("div");
     div.className = "small";
-    div.textContent = "No slots found. Check your sleep schedule in Settings.";
-    els.slotList.appendChild(div);
-  } else {
-    for (const s of slots){
-      const card = document.createElement("div");
-      card.className = "entry";
-      card.innerHTML = `
-        <div class="entryTop">
-          <div class="tag"><i style="background:${getCss("--accent")}"></i> Slot</div>
-          <div class="entryTime">${formatPrettyDateTime(s)}</div>
-        </div>
-        <div class="small">Scheduled check-in time (awake only).</div>
-      `;
-      els.slotList.appendChild(card);
-    }
+    div.textContent = "Nothing to summarize.";
+    els.summaryBox.appendChild(div);
+    return;
+  }
+
+  const counts = new Map();
+  for (const e of entries){
+    counts.set(e.emotionKey, (counts.get(e.emotionKey) ?? 0) + 1);
+  }
+
+  const items = [...counts.entries()].sort((a,b)=>b[1]-a[1]);
+  for (const [k, c] of items){
+    const emo = emotionByKey(k);
+    const box = document.createElement("div");
+    box.className = "entry";
+    box.innerHTML = `
+      <div class="entryTop">
+        <div class="tag"><i style="background:${emo.color}"></i>${emo.emoji} ${emo.label}</div>
+        <div class="entryTime">${c} time${c===1?"":"s"}</div>
+      </div>
+      <div class="small">Count for the selected date.</div>
+    `;
+    els.summaryBox.appendChild(box);
   }
 }
 
-function buildEntry(forceOffSlot){
-  const now = new Date();
-  const settings = getSettings();
-  const info = getDueInfo(now, settings);
-
-  const emotionKey = selectedEmotionKey ?? "neutral";
-  const note = els.noteBox.value.trim();
-
-  let slotLabel = "off-slot";
-  if (!forceOffSlot && info.state === "awake" && info.dueSlot){
-    slotLabel = `${pad2(info.dueSlot.getHours())}:${pad2(info.dueSlot.getMinutes())}`;
-  }
-
-  return {
-    id: crypto.randomUUID(),
-    ts: now.getTime(),
-    dateKey: dateKeyFromDate(now),
-    tzOffsetMin: now.getTimezoneOffset(),
-    emotionKey,
-    note,
-    slotLabel
-  };
-}
-
-async function saveEntry(forceOffSlot){
-  const entry = buildEntry(forceOffSlot);
-  await DataStore.put(entry);
-
-  els.noteBox.value = "";
-  selectedEmotionKey = null;
-  document.querySelectorAll(".emo").forEach(x=>x.classList.remove("selected"));
-  els.saveHint.textContent = "Saved. Pick an emotion for the next one.";
-
-  const emo = emotionByKey(entry.emotionKey);
-  showToast("Saved!", `${emo.emoji} ${emo.label} saved`);
-
-  await refreshTodayList();
-  await refreshDayView();
-  await refreshInsights();
-}
-
-/* Insights: weekly average mood score */
+/* Insights */
 function roundRect(ctx, x, y, w, h, r){
   r = Math.min(r, w/2, h/2);
   ctx.beginPath();
@@ -1237,7 +1035,6 @@ function drawChart(canvas, points, labels){
     const top = Math.min(yVal, y0);
     const height = Math.max(2, Math.abs(y0 - yVal));
 
-    /* Pastel mapping */
     let color = getCss("--emo-neutral");
     if (val >= 1) color = getCss("--emo-happy");
     else if (val > 0) color = getCss("--emo-calm");
@@ -1290,10 +1087,7 @@ async function refreshInsights(){
 
   drawChart(els.chart, points, labels);
 
-  const total = entries.length;
-  els.insightNote.textContent = total
-    ? `Using ${total} check-ins from ${formatPrettyDate(start)} to ${formatPrettyDate(end)}.`
-    : "No check-ins in the last 7 days yet. Save a few to see trends.";
+  els.insightNote.textContent = entries.length ? `${entries.length} entries used.` : "No data for the last 7 days.";
 }
 
 /* Export */
@@ -1320,24 +1114,33 @@ async function exportJSON(){
 }
 async function exportCSV(){
   const all = await DataStore.getAll();
-  const header = ["id","ts","localDateTime","dateKey","emotionKey","slotLabel","note","tzOffsetMin"];
+  const header = ["id","ts","localDateTime","dateKey","emotionKey","note","tzOffsetMin"];
   const rows = [header.join(",")];
   for (const e of all){
     const d = new Date(e.ts);
-    const localDateTime = d.toLocaleString();
     rows.push([
       e.id,
       e.ts,
-      csvEscape(localDateTime),
+      csvEscape(d.toLocaleString()),
       e.dateKey,
       e.emotionKey,
-      e.slotLabel ?? "",
       csvEscape(e.note ?? ""),
       e.tzOffsetMin
     ].join(","));
   }
   downloadFile(`mood-checkin-${new Date().toISOString().slice(0,10)}.csv`, rows.join("\n"), "text/csv");
   showToast("Exported", "CSV downloaded.");
+}
+
+/* Retention cleanup (optional) */
+async function cleanupOldEntries(){
+  const s = getSettings();
+  const cutoff = Date.now() - (s.retentionDays * 24 * 60 * 60 * 1000);
+  const all = await DataStore.getAll();
+  const old = all.filter(e => e.ts < cutoff);
+  for (const e of old){
+    await DataStore.deleteById(e.id);
+  }
 }
 
 /* Tabs */
@@ -1351,14 +1154,11 @@ function setView(view){
 
 async function enableNotifications(){
   if (!("Notification" in window)){
-    els.notifState.textContent = "Not supported in this browser";
+    els.notifState.textContent = "Not supported";
     return;
   }
   const perm = await Notification.requestPermission();
   els.notifState.textContent = perm === "granted" ? "Enabled" : "Not enabled";
-  if (perm === "granted"){
-    showToast("Notifications enabled", "Tip: background reminders need a service worker later.");
-  }
 }
 
 /* Settings UI */
@@ -1366,7 +1166,7 @@ function loadSettingsUI(){
   const s = getSettings();
   els.sleepStart.value = s.sleepStart;
   els.sleepEnd.value = s.sleepEnd;
-  els.intervalHours.value = s.intervalHours;
+  els.retentionDays.value = s.retentionDays;
 
   if ("Notification" in window){
     els.notifState.textContent = Notification.permission === "granted" ? "Enabled" : "Not enabled";
@@ -1378,18 +1178,17 @@ async function applySettingsFromUI(){
   const s = {
     sleepStart: els.sleepStart.value || DEFAULT_SETTINGS.sleepStart,
     sleepEnd: els.sleepEnd.value || DEFAULT_SETTINGS.sleepEnd,
-    intervalHours: clamp(Number(els.intervalHours.value || DEFAULT_SETTINGS.intervalHours), 1, 12),
+    retentionDays: clamp(Number(els.retentionDays.value || DEFAULT_SETTINGS.retentionDays), 30, 3650),
   };
   saveSettings(s);
-  els.settingsHint.textContent = `Saved. Sleep: ${s.sleepStart} to ${s.sleepEnd}.`;
-  showToast("Saved", "Your schedule settings were updated.");
-  await refreshClockAndDue();
+  els.settingsHint.textContent = "Saved.";
+  showToast("Saved", "Settings updated.");
+  await cleanupOldEntries();
   await refreshTodayList();
   await refreshDayView();
   await refreshInsights();
 }
 
-/* Calendar */
 function setCalendarToToday(){
   const now = new Date();
   els.pickDate.value = dateKeyFromDate(now);
@@ -1406,8 +1205,7 @@ document.querySelectorAll(".tab").forEach(btn=>{
   });
 });
 
-els.saveBtn.addEventListener("click", async ()=>{ await saveEntry(false); });
-els.saveOffSlotBtn.addEventListener("click", async ()=>{ await saveEntry(true); });
+els.saveBtn.addEventListener("click", saveEntry);
 
 els.jumpToday.addEventListener("click", async ()=>{
   setCalendarToToday();
@@ -1419,7 +1217,7 @@ els.deleteDay.addEventListener("click", async ()=>{
   const dateStr = els.pickDate.value;
   if (!dateStr) return;
   const deletedCount = await DataStore.deleteByDate(dateStr);
-  showToast("Deleted", `Removed ${deletedCount} entries on ${dateStr}.`);
+  showToast("Deleted", `Removed ${deletedCount} entries.`);
   await refreshDayView();
   await refreshTodayList();
   await refreshInsights();
@@ -1436,7 +1234,7 @@ els.wipeAll.addEventListener("click", async ()=>{
   const ok = confirm("Wipe all data in this browser? This cannot be undone.");
   if (!ok) return;
   await DataStore.wipeAll();
-  showToast("Wiped", "All entries were removed from this browser.");
+  showToast("Wiped", "All entries removed.");
   await refreshTodayList();
   await refreshDayView();
   await refreshInsights();
@@ -1449,27 +1247,14 @@ els.wipeAll.addEventListener("click", async ()=>{
   setCalendarToToday();
 
   await DataStore.open();
-  await refreshClockAndDue();
+  await cleanupOldEntries();
+
+  await refreshClock();
   await refreshTodayList();
   await refreshDayView();
   await refreshInsights();
 
-  setInterval(refreshClockAndDue, 30000);
-
-  setInterval(async ()=>{
-    const settings = getSettings();
-    const now = new Date();
-    const info = getDueInfo(now, settings);
-
-    if ("Notification" in window && Notification.permission === "granted"){
-      if (info.state==="awake" && info.dueSlot){
-        const diff = now.getTime() - info.dueSlot.getTime();
-        if (diff >= 0 && diff < 2*60*1000){
-          new Notification("Mood Check-In", { body: "How do you feel right now? Tap to log it." });
-        }
-      }
-    }
-  }, 60000);
+  setInterval(refreshClock, 30000);
 })();
 </script>
 </body>
